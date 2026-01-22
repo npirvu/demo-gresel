@@ -1,0 +1,122 @@
+{ "objects": [{ 
+        "title": "Shot of a dog barking",
+        "creator": "Barrowclough Photo Card: Photographer",
+        "date": "1912",
+        "description": "Shot of a dog barking.",
+        "subject": "dogs; postcards",
+        "location": "Manitoba, Canada",
+        "latitude": "56.24744925",
+        "longitude": "-97.63270595",
+        "source": "Prairie Postcards Collection, University of Alberta Library",
+        "identifier": "PC002385",
+        "type": "Image;StillImage",
+        "format": "image/jpeg",
+        "language": "eng",
+        "rights": "https://creativecommons.org/publicdomain/mark/1.0/",
+        
+        "object_thumb": "https://npirvu.github.io/gresel-demo/objects/thumbs/pc002385_th.jpg",
+        "object_location": "https://npirvu.github.io/gresel-demo/objects/PC002385.json",
+        "reference_url": "/gresel-demo/items/demo_iiif_001.html"
+    },
+    { 
+        "title": "A girl and her dog",
+        "creator": "Wainwright Studio: Publisher",
+        "date": "1920",
+        "description": "Scene of a girl and a dog standing beside a fence in Wainwright, Alberta.",
+        "subject": "girls; dogs; postcards",
+        "location": "Wainwright, Alberta, Canada",
+        "latitude": "52.84320805",
+        "longitude": "-110.8508208",
+        "source": "Prairie Postcards Collection, University of Alberta Library",
+        "identifier": "PC005033",
+        "type": "Image;StillImage",
+        "format": "image/jpeg",
+        "language": "eng",
+        "rights": "https://creativecommons.org/publicdomain/mark/1.0/",
+        
+        "object_thumb": "https://npirvu.github.io/gresel-demo/objects/thumbs/pc005033_th.jpg",
+        "object_location": "https://npirvu.github.io/gresel-demo/objects/PC005033.json",
+        "reference_url": "/gresel-demo/items/demo_iiif_002.html"
+    },
+    { 
+        "title": "Cats and dogs",
+        "creator": "New York, Dodd, Mead & company [c1880]",
+        "date": "1880",
+        "description": "Picture book about cats and dogs",
+        "subject": "cats; dogs; girls",
+        "location": "New York",
+        "latitude": "40.71055333",
+        "longitude": "-73.9852298",
+        
+        "identifier": "21018296",
+        "type": "Text",
+        "format": "application/pdf",
+        "language": "eng",
+        "rights": "https://creativecommons.org/publicdomain/mark/1.0/",
+        
+        "object_thumb": "https://tile.loc.gov/image-services/iiif/public:gdcmassbookdig:catsdogs00unse:catsdogs00unse_0001/full/pct:100.0/0/default.jpg",
+        "object_location": "https://www.loc.gov/item/21018296/manifest.json",
+        "reference_url": "/gresel-demo/items/demo_iiif_003.html"
+    },
+    { 
+        "title": "Prairie dog",
+        "creator": "Morton, W.J.: Photographer",
+        "date": "1917",
+        "description": "Close-up view of a curious prairie dog.",
+        "subject": "prairie dogs",
+        "location": "Vulcan, Alberta, Canada",
+        "latitude": "50.40495675",
+        "longitude": "-113.2605853",
+        "source": "Prairie Postcards Collection, University of Alberta Library",
+        "identifier": "PC004934",
+        "type": "Image;StillImage",
+        "format": "image/jpeg",
+        "language": "eng",
+        "rights": "https://creativecommons.org/publicdomain/mark/1.0/",
+        
+        "object_thumb": "https://npirvu.github.io/gresel-demo/objects/thumbs/pc004934_th.jpg",
+        "object_location": "https://npirvu.github.io/gresel-demo/objects/PC004934.json",
+        "reference_url": "/gresel-demo/items/demo_iiif_004.html"
+    },
+    { 
+        "title": "Young Folks Pictures and Stories of Animals",
+        "creator": "Tenney, Abby A. (Abby Amy), 1836-1903.",
+        "date": "1887",
+        "description": "A children's natural history of animals",
+        "subject": "dogs; animals",
+        
+        
+        
+        
+        "identifier": "unk83034008",
+        "type": "Text",
+        "format": "application/pdf",
+        "language": "eng",
+        "rights": "https://creativecommons.org/publicdomain/mark/1.0/",
+        
+        "object_thumb": "https://tile.loc.gov/image-services/iiif/public:gdcmassbookdig:youngfolkspictu00tenn:youngfolkspictu00tenn_0001/full/pct:100.0/0/default.jpg",
+        "object_location": "https://www.loc.gov/item/unk83034008/manifest.json",
+        "reference_url": "/gresel-demo/items/demo_iiif_005.html"
+    },
+    { 
+        "title": "Dog on Old Chatham Mill wheel",
+        "creator": "Beals, Jessie Tarbox, 1870-1942, American [photographer]",
+        "date": "1910",
+        "description": "Dog on Old Chatham Mill wheel",
+        "subject": "dogs; mills",
+        
+        
+        
+        
+        "identifier": "10965711",
+        "type": "Image;StillImage",
+        "format": "image/jpeg",
+        "language": "eng",
+        "rights": "https://creativecommons.org/publicdomain/mark/1.0/",
+        
+        "object_thumb": "https://npirvu.github.io/gresel-demo/objects/thumbs/10965711_th.jpg",
+        "object_location": "https://npirvu.github.io/gresel-demo/objects/10965711.json",
+        "reference_url": "/gresel-demo/items/demo_iiif_006.html"
+    }
+    
+] }

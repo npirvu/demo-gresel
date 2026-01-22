@@ -1,0 +1,21 @@
+{ 
+    "title": "CollectionBuilder Demo IIIF",
+    "url": "https://npirvu.github.io/gresel-demo/",
+    "image": "/gresel-demo/objects/PC002385.jpg", 
+    "description": "CollectionBuilder-CSV featuring single- and multi-page IIIF objects displayed in Universal Viewer.",
+    "publisher": { 
+        "name": "Center for Digital Inquiry and Learning (CDIL)", 
+        "url": "https://cdil.lib.uidaho.edu/", 
+        "logo": "https://cdil.lib.uidaho.edu/storying-extinction/assets/img/cdil.png" 
+    },
+    "date_start": "1880",
+    "date_end": "1920",
+    "objects": {
+        "image/jpeg": "4",
+        "application/pdf": "2"
+        
+    },
+    "data": "https://npirvu.github.io/gresel-demo/assets/data/datapackage.json",
+    "last_build_date": "2026-01-21"
+}
+

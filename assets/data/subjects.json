@@ -1,0 +1,15 @@
+{ "subjects": [
+    { "subject" : "dogs", "count" : 5, "link" : "https://npirvu.github.io/gresel-demo/browse.html#dogs" },
+    { "subject" : "postcards", "count" : 2, "link" : "https://npirvu.github.io/gresel-demo/browse.html#postcards" },
+    { "subject" : "girls", "count" : 2, "link" : "https://npirvu.github.io/gresel-demo/browse.html#girls" },
+    { "subject" : "cats", "count" : 1, "link" : "https://npirvu.github.io/gresel-demo/browse.html#cats" },
+    { "subject" : "prairie dogs", "count" : 1, "link" : "https://npirvu.github.io/gresel-demo/browse.html#prairie%20dogs" },
+    { "subject" : "animals", "count" : 1, "link" : "https://npirvu.github.io/gresel-demo/browse.html#animals" },
+    { "subject" : "mills", "count" : 1, "link" : "https://npirvu.github.io/gresel-demo/browse.html#mills" },
+    { "subject" : "barrowclough photo card: photographer", "count" : 1, "link" : "https://npirvu.github.io/gresel-demo/browse.html#barrowclough%20photo%20card:%20photographer" },
+    { "subject" : "wainwright studio: publisher", "count" : 1, "link" : "https://npirvu.github.io/gresel-demo/browse.html#wainwright%20studio:%20publisher" },
+    { "subject" : "new york, dodd, mead & company [c1880]", "count" : 1, "link" : "https://npirvu.github.io/gresel-demo/browse.html#new%20york,%20dodd,%20mead%20&%20company%20%5Bc1880%5D" },
+    { "subject" : "morton, w.j.: photographer", "count" : 1, "link" : "https://npirvu.github.io/gresel-demo/browse.html#morton,%20w.j.:%20photographer" },
+    { "subject" : "tenney, abby a. (abby amy), 1836-1903.", "count" : 1, "link" : "https://npirvu.github.io/gresel-demo/browse.html#tenney,%20abby%20a.%20(abby%20amy),%201836-1903." },
+    { "subject" : "beals, jessie tarbox, 1870-1942, american [photographer]", "count" : 1, "link" : "https://npirvu.github.io/gresel-demo/browse.html#beals,%20jessie%20tarbox,%201870-1942,%20american%20%5Bphotographer%5D" }
+]}

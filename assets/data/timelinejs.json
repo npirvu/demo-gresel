@@ -1,0 +1,100 @@
+{
+    "title": {
+        "media": {
+          "url": "/gresel-demo/objects/PC002385.jpg",
+          "caption": null,
+          "credit": "CollectionBuilder Demo IIIF"
+        },
+        "text": {
+          "headline": "CollectionBuilder Demo IIIF Timeline",
+          "text": "CollectionBuilder-CSV featuring single- and multi-page IIIF objects displayed in Universal Viewer."
+        }
+    },
+    "events": [
+      {
+        "media": {
+          "url": "/gresel-demo/objects/small/pc002385_sm.jpg",
+          "caption": "Shot of a dog barking",
+          "link": "/gresel-demo/items/demo_iiif_001.html"
+        },
+        "start_date": { 
+          
+          "year": "1912"
+        },
+        "text": {
+          "headline": "Shot of a dog barking",
+          "text": "Shot of a dog barking."
+        }
+      },{
+        "media": {
+          "url": "/gresel-demo/objects/small/pc005033_sm.jpg",
+          "caption": "A girl and her dog",
+          "link": "/gresel-demo/items/demo_iiif_002.html"
+        },
+        "start_date": { 
+          
+          "year": "1920"
+        },
+        "text": {
+          "headline": "A girl and her dog",
+          "text": "Scene of a girl and a dog standing beside a fence in Wainwright, Alberta."
+        }
+      },{
+        "media": {
+          "url": "https://tile.loc.gov/image-services/iiif/public:gdcmassbookdig:catsdogs00unse:catsdogs00unse_0001/full/pct:100.0/0/default.jpg",
+          "caption": "Cats and dogs",
+          "link": "/gresel-demo/items/demo_iiif_003.html"
+        },
+        "start_date": { 
+          
+          "year": "1880"
+        },
+        "text": {
+          "headline": "Cats and dogs",
+          "text": "Picture book about cats and dogs"
+        }
+      },{
+        "media": {
+          "url": "/gresel-demo/objects/small/pc004934_sm.jpg",
+          "caption": "Prairie dog",
+          "link": "/gresel-demo/items/demo_iiif_004.html"
+        },
+        "start_date": { 
+          
+          "year": "1917"
+        },
+        "text": {
+          "headline": "Prairie dog",
+          "text": "Close-up view of a curious prairie dog."
+        }
+      },{
+        "media": {
+          "url": "https://tile.loc.gov/image-services/iiif/public:gdcmassbookdig:youngfolkspictu00tenn:youngfolkspictu00tenn_0001/full/pct:100.0/0/default.jpg",
+          "caption": "Young Folks Pictures and Stories of Animals",
+          "link": "/gresel-demo/items/demo_iiif_005.html"
+        },
+        "start_date": { 
+          
+          "year": "1887"
+        },
+        "text": {
+          "headline": "Young Folks Pictures and Stories of Animals",
+          "text": "A children's natural history of animals"
+        }
+      },{
+        "media": {
+          "url": "/gresel-demo/objects/small/10965711_sm.jpg",
+          "caption": "Dog on Old Chatham Mill wheel",
+          "link": "/gresel-demo/items/demo_iiif_006.html"
+        },
+        "start_date": { 
+          
+          "year": "1910"
+        },
+        "text": {
+          "headline": "Dog on Old Chatham Mill wheel",
+          "text": "Dog on Old Chatham Mill wheel"
+        }
+      }
+    ]
+}
