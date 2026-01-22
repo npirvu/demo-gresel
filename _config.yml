@@ -10,9 +10,9 @@
 # site domain, full URL to the production location of your collection
 url: https://npirvu.github.io
 # path to location on the domain if necessary e.g. /digital/hjccc
-baseurl: /gresel-demo
+baseurl: /demo-gresel
 # location of code, the full url to your github repository
-source-code: https://github.com/npirvu/gresel-demo
+source-code: https://github.com/npirvu/demo-gresel
 
 ##########
 # SITE SETTINGS
