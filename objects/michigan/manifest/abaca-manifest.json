@@ -2,11 +2,11 @@
   "@context": "http://iiif.io/api/presentation/2/context.json",
   "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001",
   "@type": "sc:Manifest",
-  "label": "Abaca Manila hemp) in the Philippines: by M.M. Saleeby",
+  "label": "Abaca (Manila hemp) in the Philippines: by M.M. Saleeby",
   "metadata": [
     {
       "label": "Title",
-      "value": "Abaca Manila hemp) in the Philippines: by M.M. Saleeby",
+      "value": "Abaca (Manila hemp) in the Philippines: by M.M. Saleeby",
       "field": "title"
     },
     {
