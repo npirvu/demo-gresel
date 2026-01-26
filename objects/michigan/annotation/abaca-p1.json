@@ -5,7 +5,7 @@
 
   "resources": [
     {
-      "@id": "https://npirvu.github.io/demo-gresel/annotation/abaca-p1-anno-1",
+      "@id": "https://npirvu.github.io/demo-gresel/annotation/abaca-p1",
       "@type": "oa:Annotation",
       "motivation": "sc:commenting",
 
