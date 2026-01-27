@@ -10,7 +10,7 @@
       "motivation": "sc:painting",
 
       "resource": {
-        "@type": "dctypes:Text",
+        "@type": "cnt:ContentAsText",
         "format": "text/plain",
         "chars": "THE PHILIPPINE ISLANDS\nABACÁ (MANILA HEMP)\nPANAMA PACIFIC\nINTERNATIONAL EXPOSITION\nSAN FRANCISCO CALIFORNIA"
       },
