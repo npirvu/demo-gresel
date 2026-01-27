@@ -4,7 +4,7 @@
   "@type": "sc:AnnotationList",
   "resources": [
     {
-      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json",
+      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json#anno1",
       "@type": "oa:Annotation",
       "motivation": "sc:painting",
       "resource": 
