@@ -66,19 +66,16 @@
                   "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000001",
                   "profile": "http://iiif.io/api/image/2/level1.json"
                 }
-              }
-            }
-          ],
-          "otherContent": [
-            {
-              "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1.json",
-              "@type": "sc:AnnotationList",
-              "label": "Transcription",
-              "within":
+              },
               {
-                "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/layer/abaca-p1-layer1.json",
-                "@type": "sc:Layer",
-                "label": "OCR Article Text"
+                "@id": "https://npirvu.github.io/demo-gresel/anno/abaca-p1-text",
+                "@type": "oa:Annotation",
+                "motivation": "sc:painting",
+                "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0",
+                "resource": {
+                  "@type": "dctypes:Text",
+                  "format": "text/plain",
+                  "chars": "THE PHILIPPINE ISLANDS\nABACÁ (MANILA HEMP)\nPANAMA PACIFIC INTERNATIONAL EXPOSITION\nSAN FRANCISCO CALIFORNIA"
               }
             }
           ]
