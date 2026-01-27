@@ -6,13 +6,14 @@
     {
       "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json",
       "@type": "oa:Annotation",
-      "motivation": "sc:commenting",
-      "resource": {
-        "@type": "dctypes:Text",
-        "format": "text/plain",
-        "chars": "THE PHILIPPINE ISLANDS\nABACÁ (MANILA HEMP)\nPANAMA PACIFIC\nINTERNATIONAL EXPOSITION\nSN. FRANCISCO CALIFORNIA"
+      "motivation": "sc:painting",
+      "resource": 
+      {
+        "@type":"cnt:ContentAsText",
+        "format":"text/plain",
+      "chars": "THE PHILIPPINE ISLANDS\nABACÁ (MANILA HEMP)\nPANAMA PACIFIC\nINTERNATIONAL EXPOSITION\nSN. FRANCISCO CALIFORNIA"
       },
-      "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0"
+        "on": "https://npirvu.github.io/demo-gresel/objects/michigan/manifest/abaca-manifest.json"
     }
   ]
 }
