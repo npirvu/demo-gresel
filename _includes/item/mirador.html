@@ -1,0 +1,21 @@
+<div id="mirador" style="height: 80vh; width: 100%;"></div>
+
+<script src="https://unpkg.com/mirador@3/dist/mirador.min.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    Mirador.viewer({
+      id: "mirador",
+      windows: [{
+        manifestId: "{{ page.object_location }}"
+      }],
+      window: {
+        sideBarOpen: true,
+        sideBarPanel: "info"
+      },
+      workspaceControlPanel: {
+        enabled: false
+      }
+    });
+  });
+</script>
