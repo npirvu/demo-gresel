@@ -1,21 +1,42 @@
-<div id="mirador" style="height: 80vh; width: 100%;"></div>
+<div class="card mb-4 text-center">
 
-<script src="https://unpkg.com/mirador@3/dist/mirador.min.js"></script>
+    <!-- Mirador container -->
+    <div id="mirador" style="width: 100%; height: 700px;"></div>
 
+    <div class="card-body">
+        {% include item/download-buttons.html %}
+    </div>
+
+</div>
+
+<!-- Load Mirador assets from CDN -->
+<link rel="stylesheet" href="https://unpkg.com/mirador/dist/css/mirador.min.css"/>
+<script src="https://unpkg.com/mirador/dist/mirador.min.js"></script>
+
+<!-- Initialize Mirador -->
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    Mirador.viewer({
-      id: "mirador",
-      windows: [{
-        manifestId: "{{ page.object_location | relative_url }}"
-      }],
-      window: {
-        sideBarOpen: true,
-        sideBarPanel: "info"
+  var miradorInstance = Mirador.viewer({
+    id: 'mirador',
+    themes: {
+      dark: {
+        palette: {
+          type: 'dark',
+          primary: {
+            main: '#ace600',
+          },
+        },
       },
-      workspaceControlPanel: {
-        enabled: false
-      }
-    });
+      light: {
+        palette: {
+          type: 'light',
+          primary: {
+            main: '#ace600',
+          },
+        },
+      },
+    },
+    windows: [{
+      manifestId: "{{ page.object_location | relative_url }}"
+    }]
   });
 </script>
