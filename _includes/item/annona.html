@@ -1,0 +1,16 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/annona/dist/annona.min.css">
+<script src="https://cdn.jsdelivr.net/npm/annona/dist/annona.min.js"></script>
+
+<div id="annona" style="width: 100%; height: 700px;"></div>
+
+<script>
+  const viewer = new Annona({
+    target: "#annona",
+    manifestUri: "{{ page.object_location | relative_url }}",
+    options: {
+      showTranscriptions: true,  // display transcription panel
+      showImages: true,
+      showMetadata: true
+    }
+  });
+</script>
