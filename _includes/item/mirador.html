@@ -15,7 +15,7 @@
 
 <!-- Initialize Mirador -->
 <script>
-  var miradorInstance = Mirador.viewer({
+  var miradorInstance = Mirador.viewer(config, [MiradorAnnotations])({
     id: 'mirador',
     themes: {
       dark: {
@@ -37,9 +37,6 @@
     },
     windows: [{
       manifestId: "{{ page.object_location | relative_url }}"
-    }],
-    plugins: [
-      MiradorAnnotations
-    ]
+    }]
   });
 </script>
