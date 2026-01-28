@@ -1,7 +1,3 @@
-<!-- add Mirador CSS & JS for annotations -->
-<link rel="stylesheet" href="https://unpkg.com/mirador-annotations/dist/mirador-annotations.min.css"/>
-<script src="https://unpkg.com/mirador-annotations/dist/mirador-annotations.min.js"></script>
-
 <div class="card mb-4 text-center">
 
     <!-- Mirador container -->
@@ -41,9 +37,6 @@
     },
     windows: [{
       manifestId: "{{ page.object_location | relative_url }}"
-    }],
-    plugins: [
-        MiradorAnnotations
-    ]
+    }]
   });
 </script>
