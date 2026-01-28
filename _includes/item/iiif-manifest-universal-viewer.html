@@ -13,7 +13,23 @@
 <script>
     // initialize Universal Viewer
     var uvOptions = {
-        manifest: {{ page.object_location | relative_url | jsonify }}
+        manifest: {{ page.object_location | relative_url | jsonify }},
+        locale: "en-GB",
+        config: {
+            modules: {
+                contentLeftPanel: {
+                    options: {
+                        panelOpen: true
+                    }
+                },
+                contentRightPanel: {
+                    options: {
+                        panelOpen: true
+                        defaultTab: "text"
+                    }
+                }
+            }
+        }
         // add options here!
     };
     var iiif_viewer = UV.init("uv", uvOptions);
