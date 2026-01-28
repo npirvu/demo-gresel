@@ -7,7 +7,7 @@
     Mirador.viewer({
       id: "mirador",
       windows: [{
-        manifestId: "{{ page.object_location }}"
+        manifestId: "{{ page.object_location | relative_url }}"
       }],
       window: {
         sideBarOpen: true,
