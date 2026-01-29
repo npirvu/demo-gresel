@@ -1,40 +1,130 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Universal Viewer Example</title>
+{% comment %}
+    Embed Universal Viewer to load item from an IIIF manifest file
+    This include assumes that Item's object_location field is a relative link or direct URL to a IIIF manifest JSON file.
+{% endcomment %}
 
-  <!-- Universal Viewer CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/@universalviewer/uv@4.0.0/dist/uv.css" />
+<!-- UV CSS y JS -->
+<link rel="stylesheet" href="https://viewer.library.wales/viewer-custom.css"/>
+<script src="https://cdn.jsdelivr.net/npm/universalviewer@4.0.0/dist/umd/UV.js"></script>
 
-  <!-- Welsh Library Custom CSS -->
-  <link rel="stylesheet" href="https://viewer.library.wales/viewer-custom.css" />
+<!-- Div para el viewer -->
+<div class="uv" id="uv" style="width: 100%; height: 668px;"></div>
 
-  <!-- Optional: Customize favicon, fonts, etc. -->
-  <style>
-    body {
-      margin: 0;
-    }
-  </style>
-</head>
-<body>
+<!-- Botones de ejemplo para navegar a artículos -->
+<div id="article-buttons">
+    <button data-actuator="ART1">Ir al Artículo 1</button>
+    <button data-actuator="ART2">Ir al Artículo 2</button>
+</div>
 
-  <!-- Viewer Container -->
-  <div id="uv" class="uv" style="width: 100%; height: 100vh;"></div>
+<!-- Contenido de artículos (para copiar) -->
+<div id="article-contents">
+    <div id="content-ART1">Texto completo del artículo 1...</div>
+    <div id="content-ART2">Texto completo del artículo 2...</div>
+</div>
 
-  <!-- Universal Viewer JS -->
-  <script src="https://unpkg.com/@universalviewer/uv@4.0.0/dist/uv.min.js"></script>
-
-  <!-- Initialize Viewer -->
-  <script>
-    const options = {
-      manifest: "{{ page.object_location | relative_url }}", // Replace with your IIIF manifest
-      locale: "en-GB",
-      configUri: null, // Optional: custom config JSON
+<!-- Inicialización de UV -->
+<script>
+    var uvOptions = {
+        manifest: "{{ page.object_location | relative_url }}",
+        locale: "en-GB",
+        config: {
+            modules: {
+                contentLeftPanel: { options: { panelOpen: true } },
+                contentRightPanel: { options: { panelOpen: true, defaultTab: "text" } }
+            }
+        }
     };
 
-    uv = UV.init("uv", options);
-  </script>
+    var iiif_viewer = UV.init("uv", uvOptions);
+</script>
 
-</body>
-</html>
+<!-- Script para overlays, zoom y copiado -->
+<script>
+document.addEventListener("uv-loaded", function() {
+    var uvViewer = iiif_viewer;
+    var osdViewer = uvViewer.osd;
+
+    // Define tus boundaries aquí
+    var boundaries = '[{"id":"ART1","textBlocks":{"PAG_1_TB1":{"x":0.02,"y":0.26,"h":1.06,"w":0.19}}}, {"id":"ART2","textBlocks":{"PAG_1_TB1":{"x":0.25,"y":0.26,"h":1.06,"w":0.19}}}]';
+    var articles = {};
+
+    boundaries = JSON.parse(boundaries);
+
+    // Crear overlays
+    boundaries.forEach(function(boundary) {
+        var article = { id: boundary.id, blocks: [] };
+        var tbobj = Object.keys(boundary.textBlocks).map(function(key) {
+            return boundary.textBlocks[key];
+        });
+
+        tbobj.forEach(function(textBlock) {
+            var overlay = document.createElement('div');
+            overlay.className = 'article-segment';
+            overlay.setAttribute('article-part', boundary.id);
+
+            osdViewer.addOverlay(overlay, new OpenSeadragon.Rect(
+                textBlock.x, textBlock.y, textBlock.w, textBlock.h
+            ));
+
+            // hover
+            overlay.addEventListener('mouseover', function() {
+                overlay.classList.add('article-hover');
+            });
+            overlay.addEventListener('mouseout', function() {
+                overlay.classList.remove('article-hover');
+            });
+
+            article.blocks.push(textBlock);
+        });
+
+        articles[article.id] = article;
+    });
+
+    // Función de zoom
+    function zoomToArticle(id) {
+        var clickedArticle = articles[id];
+        if (!clickedArticle) return;
+
+        var blocks = clickedArticle.blocks;
+        var startX = Math.min(...blocks.map(b => b.x)) - 0.01;
+        var startY = Math.min(...blocks.map(b => b.y)) - 0.01;
+        var width  = Math.max(...blocks.map(b => b.w)) + 0.02;
+        var height = Math.max(...blocks.map(b => b.h)) + 0.02;
+
+        osdViewer.viewport.fitBounds(new OpenSeadragon.Rect(startX, startY, width, height));
+
+        document.querySelectorAll('.article-segment').forEach(function(el){
+            el.classList.remove('active');
+        });
+        document.querySelectorAll('[article-part="'+id+'"]').forEach(function(el){
+            el.classList.add('active');
+        });
+    }
+
+    // Conectar botones
+    document.querySelectorAll('[data-actuator]').forEach(function(btn){
+        btn.addEventListener('click', function() {
+            zoomToArticle(btn.getAttribute('data-actuator'));
+        });
+    });
+
+    // Zoom inicial
+    zoomToArticle('ART1');
+
+    // Copiar texto al portapapeles
+    window.copyToClipboard = function(article) {
+        var copyText = document.getElementById("content-" + article);
+        if (!copyText) return;
+        var text = copyText.innerText;
+        var textArea = document.createElement("textarea");
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("Copy");
+        document.body.removeChild(textArea);
+
+        // Feedback visual (opcional)
+        alert("Texto del " + article + " copiado al portapapeles");
+    }
+});
+</script>
