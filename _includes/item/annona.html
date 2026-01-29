@@ -4,12 +4,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
 
 <link rel="stylesheet"
-      href="https://github.com/npirvu/demo-gresel/blob/main/assets/css/_annona.css">
+      href="https://ncsu-libraries.github.io/annona/dist/annona.css">
 
 <script
   src="https://ncsu-libraries.github.io/annona/dist/annona.js"></script>
 
 <!-- Viewer -->
-<div id="annona-viewer" style="width:100%; height:600px;"></div>
-
-<iiif-storyboard url="{{ page.object_location | relative_url }}" style="width: 100%; height: 688px;"> </iiif-storyboard>
+<div style="margin-top: 0; padding-top: 0;"> 
+  <iiif-storyboard 
+    url="{{ page.object_location | relative_url }}" 
+    style="width: 100%; height: 600px;"> 
+  </iiif-storyboard> 
+</div>
