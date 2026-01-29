@@ -1,131 +1,109 @@
-{% comment %}
-Embed Universal Viewer loading item from IIIF manifest. Each annotation = article.
-{% endcomment %}
-
-<link rel="stylesheet" href="https://viewer.library.wales/viewer-custom.css"/>
-<script src="https://cdn.jsdelivr.net/npm/universalviewer@4.0.0/dist/umd/UV.js"></script>
-
-<!-- Viewer -->
-<div class="uv" id="uv" style="width: 100%; height: 668px;"></div>
-
-<!-- Botones de artículos (generados dinámicamente) -->
-<div id="article-buttons"></div>
-
-<!-- Contenidos de artículos (generados dinámicamente) -->
-<div id="article-contents"></div>
-
 <script>
-var uvOptions = {
-    manifest: "{{ page.object_location | relative_url }}",
-    locale: "en-GB",
-    config: {
-        modules: {
-            contentLeftPanel: { options: { panelOpen: true } },
-            contentRightPanel: { options: { panelOpen: true, defaultTab: "text" } }
-        }
-    }
-};
-
-var iiif_viewer = UV.init("uv", uvOptions);
-
-document.addEventListener("uv-loaded", function() {
+document.addEventListener("uv-loaded", async function() {
     var uvViewer = iiif_viewer;
     var osdViewer = uvViewer.osd;
 
-    // -----------------------------
-    // Aquí van tus anotaciones
-    // Cada anotación = artículo
-    // Debe tener id, contenido y bloques con coordenadas normalizadas
-    // -----------------------------
-    var annotations = [
-        {
-            id: "ART1",
-            content: "Texto completo de la anotación/artículo 1",
-            blocks: [
-                { x:0.02, y:0.26, w:0.19, h:1.06 }
-            ]
-        },
-        {
-            id: "ART2",
-            content: "Texto completo de la anotación/artículo 2",
-            blocks: [
-                { x:0.25, y:0.26, w:0.19, h:1.06 }
-            ]
-        }
-        // agrega más anotaciones según tu JSON
-    ];
-
     var articles = {};
-
     var buttonsContainer = document.getElementById("article-buttons");
     var contentsContainer = document.getElementById("article-contents");
 
-    // Generar overlays, botones y contenidos dinámicamente
-    annotations.forEach(function(annot){
-        articles[annot.id] = annot;
+    // 1️⃣ Acceder al manifest cargado en UV
+    var manifest = uvViewer.manifest;
+    if (!manifest) return;
 
-        // Crear overlay(s)
-        annot.blocks.forEach(function(block){
-            var overlay = document.createElement('div');
-            overlay.className = 'article-segment';
-            overlay.setAttribute('article-part', annot.id);
+    // 2️⃣ Recorrer canvases y sus annotation lists
+    var canvases = manifest.sequences[0].canvases || [];
 
-            osdViewer.addOverlay(overlay, new OpenSeadragon.Rect(block.x, block.y, block.w, block.h));
+    for (var c = 0; c < canvases.length; c++) {
+        var canvas = canvases[c];
+        var annotationLists = canvas.otherContent || [];
 
-            overlay.addEventListener('mouseover', function() {
-                overlay.classList.add('article-hover');
-            });
-            overlay.addEventListener('mouseout', function() {
-                overlay.classList.remove('article-hover');
-            });
+        for (var a = 0; a < annotationLists.length; a++) {
+            var annUrl = annotationLists[a]['@id'] || annotationLists[a].id;
 
-            overlay.addEventListener('click', function() {
-                zoomToArticle(annot.id);
-            });
-        });
+            // Fetch de la annotation list
+            var response = await fetch(annUrl);
+            var annList = await response.json();
 
-        // Crear botón
-        var btn = document.createElement("button");
-        btn.setAttribute("data-actuator", annot.id);
-        btn.innerText = "Ir a " + annot.id;
-        btn.addEventListener('click', function() { zoomToArticle(annot.id); });
-        buttonsContainer.appendChild(btn);
+            var resources = annList.resources || annList.items || [];
 
-        // Crear contenido
-        var contentDiv = document.createElement("div");
-        contentDiv.id = "content-" + annot.id;
-        contentDiv.innerText = annot.content;
-        contentsContainer.appendChild(contentDiv);
-    });
+            for (var r = 0; r < resources.length; r++) {
+                var ann = resources[r];
 
-    // Función de zoom a artículo
+                var id = ann['@id'] || ann.id;
+                var text = (ann.body && ann.body.value) || "Sin texto";
+
+                // Parse de coordenadas xywh
+                var on = ann.on || "";
+                var xywhMatch = on.match(/xywh=(\d+),(\d+),(\d+),(\d+)/);
+                if (!xywhMatch) continue;
+
+                var x = parseInt(xywhMatch[1]);
+                var y = parseInt(xywhMatch[2]);
+                var w = parseInt(xywhMatch[3]);
+                var h = parseInt(xywhMatch[4]);
+
+                // Normalizar a 0–1 según tamaño del canvas (aproximadamente)
+                var normX = x / canvas.width;
+                var normY = y / canvas.height;
+                var normW = w / canvas.width;
+                var normH = h / canvas.height;
+
+                var article = {
+                    id: id,
+                    content: text,
+                    blocks: [{x: normX, y: normY, w: normW, h: normH}]
+                };
+
+                articles[id] = article;
+
+                // Crear overlay
+                var overlay = document.createElement('div');
+                overlay.className = 'article-segment';
+                overlay.setAttribute('article-part', id);
+                osdViewer.addOverlay(overlay, new OpenSeadragon.Rect(normX, normY, normW, normH));
+
+                overlay.addEventListener('mouseover', function() { this.classList.add('article-hover'); });
+                overlay.addEventListener('mouseout', function() { this.classList.remove('article-hover'); });
+                overlay.addEventListener('click', function() {
+                    zoomToArticle(id);
+                });
+
+                // Crear botón
+                var btn = document.createElement("button");
+                btn.setAttribute("data-actuator", id);
+                btn.innerText = id;
+                btn.addEventListener('click', function() { zoomToArticle(id); });
+                buttonsContainer.appendChild(btn);
+
+                // Crear contenido
+                var contentDiv = document.createElement("div");
+                contentDiv.id = "content-" + id;
+                contentDiv.innerText = text;
+                contentsContainer.appendChild(contentDiv);
+            }
+        }
+    }
+
+    // Función de zoom
     function zoomToArticle(id) {
         var clickedArticle = articles[id];
         if (!clickedArticle) return;
 
-        var blocks = clickedArticle.blocks;
-        var startX = Math.min(...blocks.map(b => b.x)) - 0.01;
-        var startY = Math.min(...blocks.map(b => b.y)) - 0.01;
-        var width  = Math.max(...blocks.map(b => b.w)) + 0.02;
-        var height = Math.max(...blocks.map(b => b.h)) + 0.02;
+        var b = clickedArticle.blocks[0];
+        var rect = new OpenSeadragon.Rect(b.x - 0.01, b.y - 0.01, b.w + 0.02, b.h + 0.02);
+        osdViewer.viewport.fitBounds(rect);
 
-        osdViewer.viewport.fitBounds(new OpenSeadragon.Rect(startX, startY, width, height));
-
-        document.querySelectorAll('.article-segment').forEach(function(el){
-            el.classList.remove('active');
-        });
-        document.querySelectorAll('[article-part="'+id+'"]').forEach(function(el){
-            el.classList.add('active');
-        });
+        document.querySelectorAll('.article-segment').forEach(function(el){ el.classList.remove('active'); });
+        document.querySelectorAll('[article-part="'+id+'"]').forEach(function(el){ el.classList.add('active'); });
     }
 
-    // Función copiar al portapapeles
+    // Copiar al portapapeles
     window.copyToClipboard = function(article) {
         var copyText = document.getElementById("content-" + article);
         if (!copyText) return;
-        var text = copyText.innerText;
         var textArea = document.createElement("textarea");
-        textArea.value = text;
+        textArea.value = copyText.innerText;
         document.body.appendChild(textArea);
         textArea.select();
         document.execCommand("Copy");
@@ -133,7 +111,5 @@ document.addEventListener("uv-loaded", function() {
         alert("Texto de " + article + " copiado al portapapeles");
     }
 
-    // Zoom inicial al primer artículo
-    if (annotations.length > 0) zoomToArticle(annotations[0].id);
 });
 </script>
