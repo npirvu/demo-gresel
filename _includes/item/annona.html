@@ -12,11 +12,4 @@
 <!-- Viewer -->
 <div id="annona-viewer" style="width:100%; height:600px;"></div>
 
-<script>
-  new Annona({
-    id: "annona-viewer",
-    iiifContent: "{{ page.object_location | relative_url }}",
-    sidePanel: true,
-    readOnly: true
-  });
-</script>
+<iiif-storyboard url="{{ page.object_location | relative_url }}" style="width: 100%; height: 600px;"> </iiif-storyboard>
