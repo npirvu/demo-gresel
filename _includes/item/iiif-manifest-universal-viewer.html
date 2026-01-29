@@ -1,72 +1,77 @@
 {% comment %}
-    Embed Universal Viewer to load item from an IIIF manifest file
-    This include assumes that Item's object_location field is a relative link or direct URL to a IIIF manifest JSON file.
+Embed Universal Viewer loading item from IIIF manifest. Each annotation = article.
 {% endcomment %}
 
-<!-- UV CSS y JS -->
 <link rel="stylesheet" href="https://viewer.library.wales/viewer-custom.css"/>
 <script src="https://cdn.jsdelivr.net/npm/universalviewer@4.0.0/dist/umd/UV.js"></script>
 
-<!-- Div para el viewer -->
+<!-- Viewer -->
 <div class="uv" id="uv" style="width: 100%; height: 668px;"></div>
 
-<!-- Botones de ejemplo para navegar a artículos -->
-<div id="article-buttons">
-    <button data-actuator="ART1">Ir al Artículo 1</button>
-    <button data-actuator="ART2">Ir al Artículo 2</button>
-</div>
+<!-- Botones de artículos (generados dinámicamente) -->
+<div id="article-buttons"></div>
 
-<!-- Contenido de artículos (para copiar) -->
-<div id="article-contents">
-    <div id="content-ART1">Texto completo del artículo 1...</div>
-    <div id="content-ART2">Texto completo del artículo 2...</div>
-</div>
+<!-- Contenidos de artículos (generados dinámicamente) -->
+<div id="article-contents"></div>
 
-<!-- Inicialización de UV -->
 <script>
-    var uvOptions = {
-        manifest: "{{ page.object_location | relative_url }}",
-        locale: "en-GB",
-        config: {
-            modules: {
-                contentLeftPanel: { options: { panelOpen: true } },
-                contentRightPanel: { options: { panelOpen: true, defaultTab: "text" } }
-            }
+var uvOptions = {
+    manifest: "{{ page.object_location | relative_url }}",
+    locale: "en-GB",
+    config: {
+        modules: {
+            contentLeftPanel: { options: { panelOpen: true } },
+            contentRightPanel: { options: { panelOpen: true, defaultTab: "text" } }
         }
-    };
+    }
+};
 
-    var iiif_viewer = UV.init("uv", uvOptions);
-</script>
+var iiif_viewer = UV.init("uv", uvOptions);
 
-<!-- Script para overlays, zoom y copiado -->
-<script>
 document.addEventListener("uv-loaded", function() {
     var uvViewer = iiif_viewer;
     var osdViewer = uvViewer.osd;
 
-    // Define tus boundaries aquí
-    var boundaries = '[{"id":"ART1","textBlocks":{"PAG_1_TB1":{"x":0.02,"y":0.26,"h":1.06,"w":0.19}}}, {"id":"ART2","textBlocks":{"PAG_1_TB1":{"x":0.25,"y":0.26,"h":1.06,"w":0.19}}}]';
+    // -----------------------------
+    // Aquí van tus anotaciones
+    // Cada anotación = artículo
+    // Debe tener id, contenido y bloques con coordenadas normalizadas
+    // -----------------------------
+    var annotations = [
+        {
+            id: "ART1",
+            content: "Texto completo de la anotación/artículo 1",
+            blocks: [
+                { x:0.02, y:0.26, w:0.19, h:1.06 }
+            ]
+        },
+        {
+            id: "ART2",
+            content: "Texto completo de la anotación/artículo 2",
+            blocks: [
+                { x:0.25, y:0.26, w:0.19, h:1.06 }
+            ]
+        }
+        // agrega más anotaciones según tu JSON
+    ];
+
     var articles = {};
 
-    boundaries = JSON.parse(boundaries);
+    var buttonsContainer = document.getElementById("article-buttons");
+    var contentsContainer = document.getElementById("article-contents");
 
-    // Crear overlays
-    boundaries.forEach(function(boundary) {
-        var article = { id: boundary.id, blocks: [] };
-        var tbobj = Object.keys(boundary.textBlocks).map(function(key) {
-            return boundary.textBlocks[key];
-        });
+    // Generar overlays, botones y contenidos dinámicamente
+    annotations.forEach(function(annot){
+        articles[annot.id] = annot;
 
-        tbobj.forEach(function(textBlock) {
+        // Crear overlay(s)
+        annot.blocks.forEach(function(block){
             var overlay = document.createElement('div');
             overlay.className = 'article-segment';
-            overlay.setAttribute('article-part', boundary.id);
+            overlay.setAttribute('article-part', annot.id);
 
-            osdViewer.addOverlay(overlay, new OpenSeadragon.Rect(
-                textBlock.x, textBlock.y, textBlock.w, textBlock.h
-            ));
+            osdViewer.addOverlay(overlay, new OpenSeadragon.Rect(block.x, block.y, block.w, block.h));
 
-            // hover
             overlay.addEventListener('mouseover', function() {
                 overlay.classList.add('article-hover');
             });
@@ -74,13 +79,26 @@ document.addEventListener("uv-loaded", function() {
                 overlay.classList.remove('article-hover');
             });
 
-            article.blocks.push(textBlock);
+            overlay.addEventListener('click', function() {
+                zoomToArticle(annot.id);
+            });
         });
 
-        articles[article.id] = article;
+        // Crear botón
+        var btn = document.createElement("button");
+        btn.setAttribute("data-actuator", annot.id);
+        btn.innerText = "Ir a " + annot.id;
+        btn.addEventListener('click', function() { zoomToArticle(annot.id); });
+        buttonsContainer.appendChild(btn);
+
+        // Crear contenido
+        var contentDiv = document.createElement("div");
+        contentDiv.id = "content-" + annot.id;
+        contentDiv.innerText = annot.content;
+        contentsContainer.appendChild(contentDiv);
     });
 
-    // Función de zoom
+    // Función de zoom a artículo
     function zoomToArticle(id) {
         var clickedArticle = articles[id];
         if (!clickedArticle) return;
@@ -101,17 +119,7 @@ document.addEventListener("uv-loaded", function() {
         });
     }
 
-    // Conectar botones
-    document.querySelectorAll('[data-actuator]').forEach(function(btn){
-        btn.addEventListener('click', function() {
-            zoomToArticle(btn.getAttribute('data-actuator'));
-        });
-    });
-
-    // Zoom inicial
-    zoomToArticle('ART1');
-
-    // Copiar texto al portapapeles
+    // Función copiar al portapapeles
     window.copyToClipboard = function(article) {
         var copyText = document.getElementById("content-" + article);
         if (!copyText) return;
@@ -122,9 +130,10 @@ document.addEventListener("uv-loaded", function() {
         textArea.select();
         document.execCommand("Copy");
         document.body.removeChild(textArea);
-
-        // Feedback visual (opcional)
-        alert("Texto del " + article + " copiado al portapapeles");
+        alert("Texto de " + article + " copiado al portapapeles");
     }
+
+    // Zoom inicial al primer artículo
+    if (annotations.length > 0) zoomToArticle(annotations[0].id);
 });
 </script>
