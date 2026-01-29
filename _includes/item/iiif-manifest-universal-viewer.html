@@ -1,37 +1,40 @@
-{% comment %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Universal Viewer Example</title>
 
-    Embed Universal Viewer to load item from an IIIF manifest file, https://github.com/UniversalViewer/universalviewer 
-    This include assumes that Item's object_location field is a relative link or direct url to a IIIF manifest json file. e.g. https://wellcomelibrary.org/iiif/b18035723/manifest 
-    If you are using an external manifest url, you may encounter CORS policy error if the server hosting the manifest is not set up correctly--one workaround is to download the json file, add to your "objects" folder, and use a relative link, e.g. "objects/book-manifest1.json". You do not need the images, just the manifest file!
+  <!-- Universal Viewer CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/@universalviewer/uv@4.0.0/dist/uv.css" />
 
-{% endcomment %}
-<!-- add IIIF Universal Viewer assets from CDN -->
-<link rel="stylesheet" href="https://viewer.library.wales/viewer-custom.css"/>
-<script src="https://cdn.jsdelivr.net/npm/universalviewer@4.0.0/dist/umd/UV.js"></script>
-<!-- add div for viewer -->
-<div class="uv" id="uv" style="width: 100%; height: 668px;"></div>
-<script>
-    // initialize Universal Viewer
-    var uvOptions = {
-        manifest: "{{ page.object_location | relative_url }}",
-        locale: "en-GB",
-        config: {
-            modules: {
-                contentLeftPanel: {
-                    options: {
-                        panelOpen: true
-                    }
-                },
-                contentRightPanel: {
-                    options: {
-                        panelOpen: true,
-                        defaultTab: "text"
-                    }
-                }
-            }
-        }
-        // add options here!
+  <!-- Welsh Library Custom CSS -->
+  <link rel="stylesheet" href="https://viewer.library.wales/viewer-custom.css" />
+
+  <!-- Optional: Customize favicon, fonts, etc. -->
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Viewer Container -->
+  <div id="uv" class="uv" style="width: 100%; height: 100vh;"></div>
+
+  <!-- Universal Viewer JS -->
+  <script src="https://unpkg.com/@universalviewer/uv@4.0.0/dist/uv.min.js"></script>
+
+  <!-- Initialize Viewer -->
+  <script>
+    const options = {
+      manifest: "{{ page.object_location | relative_url }}", // Replace with your IIIF manifest
+      locale: "en-GB",
+      configUri: null, // Optional: custom config JSON
     };
-    var iiif_viewer = UV.init("uv", uvOptions);
-</script>
 
+    uv = UV.init("uv", options);
+  </script>
+
+</body>
+</html>
