@@ -8,6 +8,12 @@ Embed Universal Viewer loading item from IIIF manifest. Each annotation = articl
 <!-- Viewer -->
 <div class="uv" id="uv" style="width: 100%; height: 668px;"></div>
 
+<!-- Botones de artículos (generados dinámicamente) -->
+<div id="article-buttons"></div>
+
+<!-- Contenidos de artículos (generados dinámicamente) -->
+<div id="article-contents"></div>
+
 <script>
 document.addEventListener("uv-loaded", async function() {
     var uvViewer = iiif_viewer;
