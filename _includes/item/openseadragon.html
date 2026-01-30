@@ -73,7 +73,11 @@ async function init() {
     ? image.service[0]
     : image.service;
 
-  const infoJsonUrl = (service.id || service['@id']) + "/info.json";
+  const canvas = manifest.items[0];
+  const imageService =
+    canvas.items[0].items[0].body.service[0]['@id'];
+
+  const INFO_JSON_URL = imageService + "/info.json";
 
   /* 3. Inicializar OpenSeadragon */
   const viewer = OpenSeadragon({
