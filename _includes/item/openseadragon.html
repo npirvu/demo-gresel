@@ -50,46 +50,65 @@
 
 <body>
 
-<h2>IIIF Articles Viewer</h2>
-<div id="osd"></div>
+<div id="osd-controls">
+  <button id="prev-page">Anterior</button>
+  <button id="next-page">Siguiente</button>
+  <span id="page-indicator">Página 1 / N</span>
+</div>
 
 <h3>OCR Transcriptions</h3>
 <div id="article-buttons"></div>
 
+<h2>IIIF Articles Viewer</h2>
+<div id="osd"></div>
+
 <script>
 const MANIFEST_URL = "{{ page.object_location || relative_url }}";
 
+let viewer;
+let currentIndex = 0;
+let canvases = [];
+
 async function init() {
-
-  // 1️⃣ Cargar manifest
   const manifest = await (await fetch(MANIFEST_URL)).json();
+  canvases = manifest.sequences[0].canvases;
 
-  // 2️⃣ Primer canvas
-  const canvas = manifest.sequences[0].canvases[0];
-
-  // 3️⃣ info.json de la imagen
-  const image = canvas.images[0].resource;
-  const service = Array.isArray(image.service) ? image.service[0] : image.service;
-  const infoJsonUrl = (service['@id'] || service.id) + "/info.json";
-  const info = await (await fetch(infoJsonUrl)).json();
-
-  const imgWidth = info.width;
-  const imgHeight = info.height;
-
-  // 4️⃣ OpenSeadragon
-  const viewer = OpenSeadragon({
+  viewer = OpenSeadragon({
     id: "osd",
     prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
-    tileSources: infoJsonUrl,
     showNavigator: true
   });
 
+  // cargar el primer canvas
+  loadCanvas(0);
+}
+
+async function loadCanvas(index) {
+  currentIndex = index;
+  const canvas = canvases[index];
+  const image = canvas.images[0].resource;
+  const service = Array.isArray(image.service) ? image.service[0] : image.service;
+  const infoJsonUrl = (service['@id'] || service.id) + "/info.json";
+
+  viewer.open(infoJsonUrl);
+
   viewer.addHandler("open", async () => {
     const articles = await loadAnnotations(canvas);
-    console.log("ARTICLES PARSED:", articles);
     renderArticles(viewer, articles);
   });
+
+  document.getElementById("page-indicator").textContent =
+    `Página ${index + 1} / ${canvases.length}`;
 }
+
+// Botones
+document.getElementById("prev-page").onclick = () => {
+  if (currentIndex > 0) loadCanvas(currentIndex - 1);
+};
+
+document.getElementById("next-page").onclick = () => {
+  if (currentIndex < canvases.length - 1) loadCanvas(currentIndex + 1);
+};
 
 // ================================
 // CARGA ANOTACIONES IIIF v2
