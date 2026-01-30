@@ -116,16 +116,11 @@ async function loadAnnotations(canvas) {
       const w = parseInt(m[3], 10);
       const h = parseInt(m[4], 10);
 
-      articles[id] = {
-        id,
-        text,
-        block: {
-          x: x / canvasWidth,
-          y: y / canvasHeight,
-          w: w / canvasWidth,
-          h: h / canvasHeight
-        }
-      };
+    articles[id] = {
+      id,
+      text,
+      xywh: { x, y, w, h }   // ← IMPORTANTE
+    };
     }
   }
 
@@ -151,14 +146,15 @@ function renderArticles(viewer, articles) {
     overlay.className = "article-segment";
     overlay.setAttribute("article-part", id);
 
+const tiledImage = viewer.world.getItemAt(0);
+const { x, y, w, h } = art.xywh;
+
+const imageRect = new OpenSeadragon.Rect(x, y, w, h);
+const viewportRect = tiledImage.imageToViewportRectangle(imageRect);
+
 viewer.addOverlay({
   element: overlay,
-  location: viewer.viewport.imageToViewportRectangle(
-    art.block.x * viewer.world.getItemAt(0).getContentSize().x,
-    art.block.y * viewer.world.getItemAt(0).getContentSize().y,
-    art.block.w * viewer.world.getItemAt(0).getContentSize().x,
-    art.block.h * viewer.world.getItemAt(0).getContentSize().y
-  )
+  location: viewportRect
 });
 
     overlay.addEventListener("mouseover", () => overlay.classList.add("article-hover"));
@@ -191,15 +187,13 @@ viewer.addOverlay({
 // ZOOM
 // ================================
 function zoomToArticle(viewer, article) {
-  const b = article.block;
-  const rect = new OpenSeadragon.Rect(
-    b.x - 0.01,
-    b.y - 0.01,
-    b.w + 0.02,
-    b.h + 0.02
-  );
+  const tiledImage = viewer.world.getItemAt(0);
+  const { x, y, w, h } = article.xywh;
 
-  viewer.viewport.fitBounds(rect);
+  const imageRect = new OpenSeadragon.Rect(x, y, w, h);
+  const viewportRect = tiledImage.imageToViewportRectangle(imageRect);
+
+  viewer.viewport.fitBounds(viewportRect, true);
 
   document.querySelectorAll(".article-segment")
     .forEach(el => el.classList.remove("active"));
@@ -207,6 +201,7 @@ function zoomToArticle(viewer, article) {
   document.querySelectorAll(`[article-part="${article.id}"]`)
     .forEach(el => el.classList.add("active"));
 }
+
 
 // ================================
 // ARRANQUE
