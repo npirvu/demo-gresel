@@ -119,14 +119,28 @@ async function loadAnnotations(manifest) {
 
         const body = Array.isArray(ann.body) ? ann.body[0] : ann.body;
         const text = body?.value || "Sin texto";
-
+        
         const target = ann.target || ann.on;
-        const selector =
-          target?.selector?.value ||
-          target?.selector ||
-          target;
 
-        const m = selector.match(/xywh=(\d+),(\d+),(\d+),(\d+)/);
+        let selector = null;
+
+        // Caso Recogito / IIIF v2 (selector es array)
+        if (target?.selector) {
+        if (Array.isArray(target.selector)) {
+            selector = target.selector[0].value;
+        } else {
+            selector = target.selector.value;
+        }
+        }
+        // Fallbacks
+        else if (typeof target === "string") {
+        selector = target;
+        }
+
+        if (!selector) continue;
+
+
+        const m = selector.match(/xywh=pixel:(\d+),(\d+),(\d+),(\d+)/);
         if (!m) continue;
 
         const x = parseInt(m[1]);
