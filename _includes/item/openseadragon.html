@@ -147,15 +147,15 @@ function renderArticles(viewer, articles) {
     overlay.className = "article-segment";
     overlay.setAttribute("article-part", id);
 
-    viewer.addOverlay({
-      element: overlay,
-      location: new OpenSeadragon.Rect(
-        art.block.x,
-        art.block.y,
-        art.block.w,
-        art.block.h
-      )
-    });
+viewer.addOverlay({
+  element: overlay,
+  location: viewer.viewport.imageToViewportRectangle(
+    art.block.x * viewer.world.getItemAt(0).getContentSize().x,
+    art.block.y * viewer.world.getItemAt(0).getContentSize().y,
+    art.block.w * viewer.world.getItemAt(0).getContentSize().x,
+    art.block.h * viewer.world.getItemAt(0).getContentSize().y
+  )
+});
 
     overlay.addEventListener("mouseover", () => overlay.classList.add("article-hover"));
     overlay.addEventListener("mouseout", () => overlay.classList.remove("article-hover"));
