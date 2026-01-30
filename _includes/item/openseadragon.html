@@ -4,122 +4,166 @@
 <meta charset="utf-8">
 <title>IIIF Articles Viewer (OpenSeadragon)</title>
 
+<!-- OpenSeadragon -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
 
 <style>
-  #osd { width: 100%; height: 700px; border: 1px solid #ccc; }
+  #osd {
+    width: 100%;
+    height: 700px;
+    border: 1px solid #ccc;
+  }
+
   .article-segment {
     border: 2px solid rgba(255,0,0,0.6);
     background: rgba(255,0,0,0.15);
     cursor: pointer;
-    position: absolute;
+    position: absolute; /* importante para overlay */
   }
-  .article-segment.article-hover { background: rgba(255,0,0,0.3); }
-  .article-segment.active { border-color: blue; background: rgba(0,0,255,0.2); }
-  #article-buttons button { margin: 0.2em; }
-  #article-contents { margin-top: 1em; padding: 0.5em; border: 1px solid #ccc; }
+
+  .article-segment.article-hover {
+    background: rgba(255,0,0,0.3);
+  }
+
+  .article-segment.active {
+    border-color: blue;
+    background: rgba(0,0,255,0.2);
+  }
+
+  #article-buttons button {
+    margin: 0.2em;
+    display: block;
+  }
+
+  .article-content {
+    margin-left: 1em;
+    display: none;
+  }
+
+  /* opcional: estilo acordeón */
+  #article-buttons div {
+    margin-bottom: 0.5em;
+  }
 </style>
 </head>
 
 <body>
 
 <h2>IIIF Articles Viewer</h2>
+
 <div id="osd"></div>
 
 <h3>Artículos</h3>
 <div id="article-buttons"></div>
 
-<h3>Contenido</h3>
-<div id="article-contents"></div>
-
 <script>
-const MANIFEST_URL = "{{ page.object_location || relative_url }}";  // tu manifest IIIF
+const MANIFEST_URL = "{{ page.object_location | relative_url }}";
 
+/* ================================
+   INIT
+================================ */
 async function init() {
-
-  // 1️⃣ Cargar manifest
+  // Cargar manifest
   const manifestResp = await fetch(MANIFEST_URL);
   const manifest = await manifestResp.json();
 
-  // 2️⃣ Obtener info.json del primer canvas
-  const canvas = manifest.sequences[0].canvases[0];
-  const image = canvas.images[0].resource;
-  const service = Array.isArray(image.service) ? image.service[0] : image.service;
-  const infoJsonUrl = (service['@id'] || service.id) + "/info.json";
+  // Obtener info.json automáticamente
+  const canvases = manifest.items || manifest.sequences[0].canvases;
+  const canvas = canvases[0];
 
+  const image =
+    canvas.items?.[0]?.items?.[0]?.body ||   // IIIF v3
+    canvas.images?.[0]?.resource;            // IIIF v2
+
+  const service = Array.isArray(image.service)
+    ? image.service[0]
+    : image.service;
+
+  const infoJsonUrl = (service.id || service['@id']) + "/info.json";
   console.log("INFO.JSON:", infoJsonUrl);
 
-  // 3️⃣ Inicializar OpenSeadragon
+  // Inicializar OpenSeadragon
   const viewer = OpenSeadragon({
     id: "osd",
     prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
     tileSources: infoJsonUrl,
-    showNavigator: true
+    showNavigator: true,
+    showRotationControl: true
   });
 
   viewer.addHandler("open", async () => {
-    const articles = await loadAnnotations(canvas);
+    const articles = await loadAnnotations(manifest);
     console.log("ARTICLES PARSED:", articles);
+
     renderArticles(viewer, articles);
   });
 }
 
-// ================================
-// CARGA ANOTACIONES V2
-// ================================
-async function loadAnnotations(canvas) {
+/* ================================
+   CARGAR ANOTACIONES
+================================ */
+async function loadAnnotations(manifest) {
   const articles = {};
+  const canvases = manifest.items || manifest.sequences[0].canvases;
 
-  const pages = canvas.otherContent || [];
+  for (const c of canvases) {
+    const pages = c.annotations || c.otherContent || [];
 
-  for (const page of pages) {
-    // Traer archivo JSON de anotaciones
-    const pageData = await (await fetch(page['@id'] || page.id)).json();
-    const annotations = pageData.resources || [];
+    for (const page of pages) {
+      const pageData = page.items
+        ? page
+        : await (await fetch(page.id || page['@id'])).json();
 
-    for (const ann of annotations) {
-      const id = ann['@id'] || ann.id;
+      const annotations = Array.isArray(pageData)
+        ? pageData
+        : pageData.items || pageData.resources || [];
 
-      // texto
-      const text = ann.resource?.chars || "Sin texto";
+      for (const ann of annotations) {
+        const id = ann.id || ann['@id'];
 
-      // xywh en la URL
-      const on = ann.on || "";
-      const m = on.match(/xywh=(\d+),(\d+),(\d+),(\d+)/);
-      if (!m) continue;
+        const body = Array.isArray(ann.body) ? ann.body[0] : ann.body;
+        const text = body?.value || body?.chars || "Sin texto";
 
-      const x = parseInt(m[1]);
-      const y = parseInt(m[2]);
-      const w = parseInt(m[3]);
-      const h = parseInt(m[4]);
+        const target = ann.target || ann.on;
+        const selector =
+          target?.selector?.value ||
+          target?.selector?.[0]?.value ||
+          target;
 
-      const block = {
-        x: x / canvas.width,
-        y: y / canvas.height,
-        w: w / canvas.width,
-        h: h / canvas.height
-      };
+        const m = selector.match(/xywh=pixel:(\d+),(\d+),(\d+),(\d+)/);
+        if (!m) continue;
 
-      articles[id] = { id, text, block };
+        const x = parseInt(m[1]);
+        const y = parseInt(m[2]);
+        const w = parseInt(m[3]);
+        const h = parseInt(m[4]);
+
+        const block = {
+          x: x / c.width,
+          y: y / c.height,
+          w: w / c.width,
+          h: h / c.height
+        };
+
+        articles[id] = { id, text, block };
+      }
     }
   }
 
   return articles;
 }
 
-// ================================
-// RENDER
-// ================================
+/* ================================
+   RENDER ARTÍCULOS
+================================ */
 function renderArticles(viewer, articles) {
   const container = document.getElementById("article-buttons");
-  container.innerHTML = ""; // limpiar
-
+  container.innerHTML = "";
   let counter = 1;
 
   for (const id in articles) {
     const art = articles[id];
-
-    const artId = "ART" + counter; // nombre numerado
+    const artId = "ART" + counter;
 
     // Overlay
     const overlay = document.createElement("div");
@@ -140,14 +184,12 @@ function renderArticles(viewer, articles) {
     overlay.addEventListener("mouseout", () => overlay.classList.remove("article-hover"));
     overlay.addEventListener("click", () => zoomToArticle(viewer, art));
 
-    // Crear contenedor de botón + contenido
+    // Contenedor botón + contenido
     const wrapper = document.createElement("div");
-    wrapper.style.marginBottom = "0.5em";
 
     // Botón numerado
     const btn = document.createElement("button");
     btn.textContent = artId;
-    btn.style.display = "block";
     btn.onclick = () => {
       zoomToArticle(viewer, art);
       const contentDiv = wrapper.querySelector(".article-content");
@@ -159,8 +201,6 @@ function renderArticles(viewer, articles) {
     const contentDiv = document.createElement("div");
     contentDiv.className = "article-content";
     contentDiv.textContent = art.text;
-    contentDiv.style.display = "none"; // inicialmente oculto
-    contentDiv.style.marginLeft = "1em";
     wrapper.appendChild(contentDiv);
 
     container.appendChild(wrapper);
@@ -169,10 +209,9 @@ function renderArticles(viewer, articles) {
   }
 }
 
-
-// ================================
-// ZOOM A ARTÍCULO
-// ================================
+/* ================================
+   ZOOM
+================================ */
 function zoomToArticle(viewer, article) {
   const b = article.block;
   const rect = new OpenSeadragon.Rect(
@@ -187,9 +226,9 @@ function zoomToArticle(viewer, article) {
   document.querySelectorAll(`[article-part="${article.id}"]`).forEach(el => el.classList.add("active"));
 }
 
-// ================================
-// ARRANQUE
-// ================================
+/* ================================
+   ARRANQUE
+================================ */
 init();
 </script>
 
