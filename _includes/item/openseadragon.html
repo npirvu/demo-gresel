@@ -33,7 +33,7 @@
 <div id="article-contents"></div>
 
 <script>
-const MANIFEST_URL = "abaca-manifest.json";  // tu manifest IIIF
+const MANIFEST_URL = "{{ page.object_location || relative_url }}";  // tu manifest IIIF
 
 async function init() {
 
