@@ -1,11 +1,11 @@
 {
   "@context": "http://iiif.io/api/presentation/2/context.json",
-  "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json",
+  "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno.json",
   "@type": "sc:AnnotationList",
 
   "resources": [
     {
-      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json#anno1",
+      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno.json#anno1",
       "@type": "oa:Annotation",
       "motivation": "sc:painting",
       "resource": {
@@ -17,7 +17,7 @@
     },
 
     {
-      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json#anno2",
+      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno.json#anno2",
       "@type": "oa:Annotation",
       "motivation": "sc:painting",
       "resource": {
@@ -29,7 +29,7 @@
     },
 
     {
-      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json#anno3",
+      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno.json#anno3",
       "@type": "oa:Annotation",
       "motivation": "sc:painting",
       "resource": {
@@ -41,7 +41,7 @@
     },
 
     {
-      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json#anno4",
+      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno.json#anno4",
       "@type": "oa:Annotation",
       "motivation": "sc:painting",
       "resource": {
@@ -53,7 +53,7 @@
     },
 
     {
-      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json#anno5",
+      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno.json#anno5",
       "@type": "oa:Annotation",
       "motivation": "sc:painting",
       "resource": {

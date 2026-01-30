@@ -71,12 +71,12 @@
           ],
           "otherContent": [
             {
-              "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json",
+              "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno.json",
               "@type": "sc:AnnotationList",
               "label": "Transcription",
               "within":
               {
-                "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/layer/abaca-p1-layer1.json",
+                "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/layer/abaca-p1-layer.json",
                 "@type": "sc:Layer",
                 "label": "OCR Article Text"
               }
@@ -135,6 +135,19 @@
                   "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000003",
                   "profile": "http://iiif.io/api/image/2/level1.json"
                 }
+              }
+            }
+          ],
+          "otherContent": [
+            {
+              "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p2-anno.json",
+              "@type": "sc:AnnotationList",
+              "label": "Transcription",
+              "within":
+              {
+                "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/layer/abaca-p2-layer.json",
+                "@type": "sc:Layer",
+                "label": "OCR Article Text"
               }
             }
           ]
