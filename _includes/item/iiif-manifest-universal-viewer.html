@@ -1,120 +1,36 @@
-<link rel="stylesheet" href="https://viewer.library.wales/viewer-custom.css"/>
+{% comment %}
+
+    Embed Universal Viewer to load item from an IIIF manifest file, https://github.com/UniversalViewer/universalviewer 
+    This include assumes that Item's object_location field is a relative link or direct url to a IIIF manifest json file. e.g. https://wellcomelibrary.org/iiif/b18035723/manifest 
+    If you are using an external manifest url, you may encounter CORS policy error if the server hosting the manifest is not set up correctly--one workaround is to download the json file, add to your "objects" folder, and use a relative link, e.g. "objects/book-manifest1.json". You do not need the images, just the manifest file!
+
+{% endcomment %}
+<!-- add IIIF Universal Viewer assets from CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/universalviewer@4.0.0/dist/uv.css"/>
 <script src="https://cdn.jsdelivr.net/npm/universalviewer@4.0.0/dist/umd/UV.js"></script>
-
-<!-- Viewer -->
+<!-- add div for viewer -->
 <div class="uv" id="uv" style="width: 100%; height: 668px;"></div>
-
-<!-- Botones y contenidos -->
-<div id="article-buttons"></div>
-<div id="article-contents"></div>
-
 <script>
-var uvOptions = {
-    manifest: "{{ page.object_location | relative_url }}",
-    locale: "en-GB",
-    config: {
-        modules: {
-            contentLeftPanel: { options: { panelOpen: true } },
-            contentRightPanel: { options: { panelOpen: true, defaultTab: "text" } }
-        }
-    }
-};
-
-// Inicializa UV y espera a que esté listo
-var iiif_viewer = UV.init("uv", uvOptions, async function(uvViewer) {
-    var osdViewer = uvViewer.osd;
-    var articles = {};
-    var buttonsContainer = document.getElementById("article-buttons");
-    var contentsContainer = document.getElementById("article-contents");
-
-    var manifest = uvViewer.manifest;
-    if (!manifest) return;
-
-    var canvases = manifest.sequences[0].canvases || [];
-
-    for (var c = 0; c < canvases.length; c++) {
-        var canvas = canvases[c];
-        var annotationLists = canvas.otherContent || [];
-
-        for (var a = 0; a < annotationLists.length; a++) {
-            var annUrl = annotationLists[a]['@id'] || annotationLists[a].id;
-            try {
-                var response = await fetch(annUrl);
-                var annList = await response.json();
-                var resources = annList.resources || annList.items || [];
-
-                for (var r = 0; r < resources.length; r++) {
-                    var ann = resources[r];
-                    var id = ann['@id'] || ann.id;
-                    var text = (ann.body && ann.body.value) || "Sin texto";
-
-                    var on = ann.on || "";
-                    var xywhMatch = on.match(/xywh=(\d+),(\d+),(\d+),(\d+)/);
-                    if (!xywhMatch) continue;
-
-                    var x = parseInt(xywhMatch[1]);
-                    var y = parseInt(xywhMatch[2]);
-                    var w = parseInt(xywhMatch[3]);
-                    var h = parseInt(xywhMatch[4]);
-
-                    var normX = x / canvas.width;
-                    var normY = y / canvas.height;
-                    var normW = w / canvas.width;
-                    var normH = h / canvas.height;
-
-                    var article = { id: id, content: text, blocks: [{x: normX, y: normY, w: normW, h: normH}] };
-                    articles[id] = article;
-
-                    // Overlay
-                    var overlay = document.createElement('div');
-                    overlay.className = 'article-segment';
-                    overlay.setAttribute('article-part', id);
-                    osdViewer.addOverlay(overlay, new OpenSeadragon.Rect(normX, normY, normW, normH));
-                    overlay.addEventListener('mouseover', function(){ this.classList.add('article-hover'); });
-                    overlay.addEventListener('mouseout', function(){ this.classList.remove('article-hover'); });
-                    overlay.addEventListener('click', function(){ zoomToArticle(id); });
-
-                    // Botón
-                    var btn = document.createElement("button");
-                    btn.setAttribute("data-actuator", id);
-                    btn.innerText = id;
-                    btn.addEventListener('click', function(){ zoomToArticle(id); });
-                    buttonsContainer.appendChild(btn);
-
-                    // Contenido
-                    var contentDiv = document.createElement("div");
-                    contentDiv.id = "content-" + id;
-                    contentDiv.innerText = text;
-                    contentsContainer.appendChild(contentDiv);
+    // initialize Universal Viewer
+    var uvOptions = {
+        manifest: "{{ page.object_location | relative_url }}",
+        locale: "en-GB",
+        config: {
+            modules: {
+                contentLeftPanel: {
+                    options: {
+                        panelOpen: true
+                    }
+                },
+                contentRightPanel: {
+                    options: {
+                        panelOpen: true,
+                        defaultTab: "text"
+                    }
                 }
-            } catch(e){ console.error("Error cargando AnnotationList:", e); }
+            }
         }
-    }
-
-    // Zoom
-    function zoomToArticle(id) {
-        var clickedArticle = articles[id];
-        if (!clickedArticle) return;
-        var b = clickedArticle.blocks[0];
-        var rect = new OpenSeadragon.Rect(b.x - 0.01, b.y - 0.01, b.w + 0.02, b.h + 0.02);
-        osdViewer.viewport.fitBounds(rect);
-
-        document.querySelectorAll('.article-segment').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('[article-part="'+id+'"]').forEach(el => el.classList.add('active'));
-    }
-
-    // Copiar
-    window.copyToClipboard = function(article) {
-        var copyText = document.getElementById("content-" + article);
-        if (!copyText) return;
-        var textArea = document.createElement("textarea");
-        textArea.value = copyText.innerText;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("Copy");
-        document.body.removeChild(textArea);
-        alert("Texto de " + article + " copiado al portapapeles");
-    }
-
-});
+        // add options here!
+    };
+    var iiif_viewer = UV.init("uv", uvOptions);
 </script>
