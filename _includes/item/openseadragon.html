@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+
+<title>IIIF Articles Viewer (OpenSeadragon)</title>
+
+<!-- OpenSeadragon -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
+
+<!-- Tu CSS -->
+<link rel="stylesheet" href="https://viewer.library.wales/viewer-custom.css"/>
+
+<style>
+  .article-segment {
+    border: 2px solid rgba(255,0,0,0.6);
+    background: rgba(255,0,0,0.15);
+    cursor: pointer;
+  }
+
+  .article-segment.article-hover {
+    background: rgba(255,0,0,0.3);
+  }
+
+  .article-segment.active {
+    border-color: blue;
+    background: rgba(0,0,255,0.2);
+  }
+
+  #article-buttons button {
+    margin: 0.2em;
+  }
+
+  #article-contents {
+    margin-top: 1em;
+  }
+</style>
+</head>
+
+<body>
+
+<div id="osd" style="width:100%; height:700px;"></div>
+
+<h3>Artículos</h3>
+<div id="article-buttons"></div>
+
+<h3>Contenido</h3>
+<div id="article-contents"></div>
+
+<script>
+/* ================================
+   CONFIGURACIÓN
+================================ */
+const MANIFEST_URL = "PEGA_AQUI_TU_MANIFEST.json";
+const INFO_JSON_URL = "PEGA_AQUI_TU_IMAGE/info.json";
+
+/* ================================
+   INICIALIZAR OSD
+================================ */
+const viewer = OpenSeadragon({
+  id: "osd",
+  prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
+  tileSources: INFO_JSON_URL,
+  showNavigator: true
+});
+
+/* ================================
+   CARGAR ANOTACIONES
+================================ */
+async function loadAnnotations() {
+  const response = await fetch(MANIFEST_URL);
+  const manifest = await response.json();
+
+  const articles = {};
+  const canvases = manifest.items || manifest.sequences[0].canvases;
+
+  for (const canvas of canvases) {
+    const annotationPages =
+      canvas.annotations ||
+      canvas.otherContent ||
+      [];
+
+    for (const page of annotationPages) {
+
+      let pageData = page.items ? page : await (await fetch(page.id || page['@id'])).json();
+      const annotations = pageData.items || pageData.resources || [];
+
+      for (const ann of annotations) {
+        const id = ann.id || ann['@id'];
+
+        const body = Array.isArray(ann.body) ? ann.body[0] : ann.body;
+        const text = body?.value || "Sin texto";
+
+        let target = ann.target || ann.on;
+        let selector = target?.selector?.value || target;
+
+        const match = selector?.match(/xywh=(\d+),(\d+),(\d+),(\d+)/);
+        if (!match) continue;
+
+        const x = parseInt(match[1]);
+        const y = parseInt(match[2]);
+        const w = parseInt(match[3]);
+        const h = parseInt(match[4]);
+
+        const norm = {
+          x: x / canvas.width,
+          y: y / canvas.height,
+          w: w / canvas.width,
+          h: h / canvas.height
+        };
+
+        articles[id] = {
+          id,
+          content: text,
+          block: norm
+        };
+      }
+    }
+  }
+  return articles;
+}
+
+/* ================================
+   RENDER
+================================ */
+function renderArticles(articles) {
+  const buttons = document.getElementById("article-buttons");
+  const contents = document.getElementById("article-contents");
+
+  for (const id in articles) {
+    const art = articles[id];
+
+    // Overlay
+    const overlay = document.createElement("div");
+    overlay.className = "article-segment";
+    overlay.setAttribute("article-part", id);
+
+    viewer.addOverlay({
+      element: overlay,
+      location: new OpenSeadragon.Rect(
+        art.block.x,
+        art.block.y,
+        art.block.w,
+        art.block.h
+      )
+    });
+
+    overlay.addEventListener("mouseover", () => overlay.classList.add("article-hover"));
+    overlay.addEventListener("mouseout", () => overlay.classList.remove("article-hover"));
+    overlay.addEventListener("click", () => zoomToArticle(art));
+
+    // Botón
+    const btn = document.createElement("button");
+    btn.textContent = id;
+    btn.onclick = () => zoomToArticle(art);
+    buttons.appendChild(btn);
+
+    // Contenido
+    const div = document.createElement("div");
+    div.id = "content-" + id;
+    div.textContent = art.content;
+    contents.appendChild(div);
+  }
+}
+
+/* ================================
+   ZOOM
+================================ */
+function zoomToArticle(article) {
+  const b = article.block;
+  const rect = new OpenSeadragon.Rect(
+    b.x - 0.01,
+    b.y - 0.01,
+    b.w + 0.02,
+    b.h + 0.02
+  );
+  viewer.viewport.fitBounds(rect);
+
+  document.querySelectorAll(".article-segment").forEach(el =>
+    el.classList.remove("active")
+  );
+  document.querySelectorAll(`[article-part="${article.id}"]`).forEach(el =>
+    el.classList.add("active")
+  );
+}
+
+/* ================================
+   ARRANQUE
+================================ */
+viewer.addHandler("open", async () => {
+  const articles = await loadAnnotations();
+  renderArticles(articles);
+});
+</script>
+
+</body>
+</html>
