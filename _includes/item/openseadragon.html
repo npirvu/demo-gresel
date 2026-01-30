@@ -32,17 +32,6 @@
 
   #article-buttons button {
     margin: 0.2em;
-    display: block;
-  }
-
-  .article-content {
-    margin-left: 1em;
-    display: none;
-  }
-
-  /* opcional: estilo acordeón */
-  #article-buttons div {
-    margin-bottom: 0.5em;
   }
 </style>
 </head>
@@ -57,17 +46,18 @@
 <div id="article-buttons"></div>
 
 <script>
+/* ================================
+   CONFIG
+================================ */
 const MANIFEST_URL = "{{ page.object_location | relative_url }}";
 
 /* ================================
    INIT
 ================================ */
 async function init() {
-  // Cargar manifest
   const manifestResp = await fetch(MANIFEST_URL);
   const manifest = await manifestResp.json();
 
-  // Obtener info.json automáticamente
   const canvases = manifest.items || manifest.sequences[0].canvases;
   const canvas = canvases[0];
 
@@ -82,7 +72,6 @@ async function init() {
   const infoJsonUrl = (service.id || service['@id']) + "/info.json";
   console.log("INFO.JSON:", infoJsonUrl);
 
-  // Inicializar OpenSeadragon
   const viewer = OpenSeadragon({
     id: "osd",
     prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
@@ -93,14 +82,14 @@ async function init() {
 
   viewer.addHandler("open", async () => {
     const articles = await loadAnnotations(manifest);
-    console.log("ARTICLES PARSED:", articles);
+    console.log("FINAL ARTICLES:", articles);
 
     renderArticles(viewer, articles);
   });
 }
 
 /* ================================
-   CARGAR ANOTACIONES
+   ANNOTATIONS = ARTÍCULOS
 ================================ */
 async function loadAnnotations(manifest) {
   const articles = {};
@@ -184,26 +173,11 @@ function renderArticles(viewer, articles) {
     overlay.addEventListener("mouseout", () => overlay.classList.remove("article-hover"));
     overlay.addEventListener("click", () => zoomToArticle(viewer, art));
 
-    // Contenedor botón + contenido
-    const wrapper = document.createElement("div");
-
     // Botón numerado
     const btn = document.createElement("button");
     btn.textContent = artId;
-    btn.onclick = () => {
-      zoomToArticle(viewer, art);
-      const contentDiv = wrapper.querySelector(".article-content");
-      contentDiv.style.display = contentDiv.style.display === "none" ? "block" : "none";
-    };
-    wrapper.appendChild(btn);
-
-    // Contenido debajo del botón
-    const contentDiv = document.createElement("div");
-    contentDiv.className = "article-content";
-    contentDiv.textContent = art.text;
-    wrapper.appendChild(contentDiv);
-
-    container.appendChild(wrapper);
+    btn.onclick = () => zoomToArticle(viewer, art);
+    container.appendChild(btn);
 
     counter++;
   }
