@@ -8,17 +8,37 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
 
 <style>
-  #osd { width: 100%; height: 700px; border: 1px solid #ccc; }
+  #osd {
+    width: 100%;
+    height: 700px;
+    border: 1px solid #ccc;
+  }
+
   .article-segment {
     border: 2px solid rgba(255,0,0,0.6);
     background: rgba(255,0,0,0.15);
     cursor: pointer;
     position: absolute;
   }
-  .article-segment.article-hover { background: rgba(255,0,0,0.3); }
-  .article-segment.active { border-color: blue; background: rgba(0,0,255,0.2); }
-  #article-buttons button { margin: 0.2em; }
-  #article-contents { margin-top: 1em; padding: 0.5em; border: 1px solid #ccc; }
+
+  .article-segment.article-hover {
+    background: rgba(255,0,0,0.3);
+  }
+
+  .article-segment.active {
+    border-color: blue;
+    background: rgba(0,0,255,0.2);
+  }
+
+  #article-buttons button {
+    margin: 0.2em;
+    display: block;
+  }
+
+  .article-content {
+    margin-left: 1em;
+    display: none;
+  }
 </style>
 </head>
 
@@ -30,25 +50,27 @@
 <h3>OCR Transcriptions</h3>
 <div id="article-buttons"></div>
 
-
 <script>
-const MANIFEST_URL = "{{ page.object_location || relative_url }}";  // tu manifest IIIF
+const MANIFEST_URL = "{{ page.object_location || relative_url }}";
 
 async function init() {
 
   // 1️⃣ Cargar manifest
-  const manifestResp = await fetch(MANIFEST_URL);
-  const manifest = await manifestResp.json();
+  const manifest = await (await fetch(MANIFEST_URL)).json();
 
-  // 2️⃣ Obtener info.json del primer canvas
+  // 2️⃣ Primer canvas
   const canvas = manifest.sequences[0].canvases[0];
+
+  // 3️⃣ info.json de la imagen
   const image = canvas.images[0].resource;
   const service = Array.isArray(image.service) ? image.service[0] : image.service;
   const infoJsonUrl = (service['@id'] || service.id) + "/info.json";
+  const info = await (await fetch(infoJsonUrl)).json();
 
-  console.log("INFO.JSON:", infoJsonUrl);
+  const imgWidth = info.width;
+  const imgHeight = info.height;
 
-  // 3️⃣ Inicializar OpenSeadragon
+  // 4️⃣ OpenSeadragon
   const viewer = OpenSeadragon({
     id: "osd",
     prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
@@ -57,49 +79,45 @@ async function init() {
   });
 
   viewer.addHandler("open", async () => {
-    const articles = await loadAnnotations(canvas);
-    console.log("ARTICLES PARSED:", articles);
+    const articles = await loadAnnotations(canvas, imgWidth, imgHeight);
     renderArticles(viewer, articles);
   });
 }
 
 // ================================
-// CARGA ANOTACIONES V2
+// CARGA ANOTACIONES IIIF v2
 // ================================
-async function loadAnnotations(canvas) {
+async function loadAnnotations(canvas, imgWidth, imgHeight) {
   const articles = {};
-
   const pages = canvas.otherContent || [];
 
   for (const page of pages) {
-    // Traer archivo JSON de anotaciones
     const pageData = await (await fetch(page['@id'] || page.id)).json();
     const annotations = pageData.resources || [];
 
     for (const ann of annotations) {
       const id = ann['@id'] || ann.id;
-
-      // texto
       const text = ann.resource?.chars || "Sin texto";
 
-      // xywh en la URL
       const on = ann.on || "";
-      const m = on.match(/xywh=(\d+),(\d+),(\d+),(\d+)/);
+      const m = on.match(/xywh=pixel:(\d+),(\d+),(\d+),(\d+)/);
       if (!m) continue;
 
-      const x = parseInt(m[1]);
-      const y = parseInt(m[2]);
-      const w = parseInt(m[3]);
-      const h = parseInt(m[4]);
+      const x = parseInt(m[1], 10);
+      const y = parseInt(m[2], 10);
+      const w = parseInt(m[3], 10);
+      const h = parseInt(m[4], 10);
 
-      const block = {
-        x: x / canvas.width,
-        y: y / canvas.height,
-        w: w / canvas.width,
-        h: h / canvas.height
+      articles[id] = {
+        id,
+        text,
+        block: {
+          x: x / imgWidth,
+          y: y / imgHeight,
+          w: w / imgWidth,
+          h: h / imgHeight
+        }
       };
-
-      articles[id] = { id, text, block };
     }
   }
 
@@ -111,14 +129,13 @@ async function loadAnnotations(canvas) {
 // ================================
 function renderArticles(viewer, articles) {
   const container = document.getElementById("article-buttons");
-  container.innerHTML = ""; // limpiar
+  container.innerHTML = "";
 
   let counter = 1;
 
   for (const id in articles) {
     const art = articles[id];
-
-    const artId = "ART" + counter; // nombre numerado
+    const artId = "ART" + counter;
 
     // Overlay
     const overlay = document.createElement("div");
@@ -139,38 +156,30 @@ function renderArticles(viewer, articles) {
     overlay.addEventListener("mouseout", () => overlay.classList.remove("article-hover"));
     overlay.addEventListener("click", () => zoomToArticle(viewer, art));
 
-    // Crear contenedor de botón + contenido
+    // UI
     const wrapper = document.createElement("div");
-    wrapper.style.marginBottom = "0.5em";
 
-    // Botón numerado
     const btn = document.createElement("button");
     btn.textContent = artId;
-    btn.style.display = "block";
     btn.onclick = () => {
       zoomToArticle(viewer, art);
-      const contentDiv = wrapper.querySelector(".article-content");
-      contentDiv.style.display = contentDiv.style.display === "none" ? "block" : "none";
+      content.style.display = content.style.display === "none" ? "block" : "none";
     };
+
+    const content = document.createElement("div");
+    content.className = "article-content";
+    content.textContent = art.text;
+
     wrapper.appendChild(btn);
-
-    // Contenido debajo del botón
-    const contentDiv = document.createElement("div");
-    contentDiv.className = "article-content";
-    contentDiv.textContent = art.text;
-    contentDiv.style.display = "none"; // inicialmente oculto
-    contentDiv.style.marginLeft = "1em";
-    wrapper.appendChild(contentDiv);
-
+    wrapper.appendChild(content);
     container.appendChild(wrapper);
 
     counter++;
   }
 }
 
-
 // ================================
-// ZOOM A ARTÍCULO
+// ZOOM
 // ================================
 function zoomToArticle(viewer, article) {
   const b = article.block;
@@ -180,10 +189,14 @@ function zoomToArticle(viewer, article) {
     b.w + 0.02,
     b.h + 0.02
   );
+
   viewer.viewport.fitBounds(rect);
 
-  document.querySelectorAll(".article-segment").forEach(el => el.classList.remove("active"));
-  document.querySelectorAll(`[article-part="${article.id}"]`).forEach(el => el.classList.add("active"));
+  document.querySelectorAll(".article-segment")
+    .forEach(el => el.classList.remove("active"));
+
+  document.querySelectorAll(`[article-part="${article.id}"]`)
+    .forEach(el => el.classList.add("active"));
 }
 
 // ================================
@@ -194,3 +207,4 @@ init();
 
 </body>
 </html>
+
