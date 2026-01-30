@@ -137,52 +137,55 @@ function renderArticles(viewer, articles) {
 
   let counter = 1;
 
-  for (const id in articles) {
-    const art = articles[id];
-    const artId = "ART" + counter;
-    overlay.dataset.art = artId;
-    content.dataset.art = artId;
+for (const id in articles) {
+  const art = articles[id];
+  const artId = "ART" + counter;
 
-    // Overlay
-    const overlay = document.createElement("div");
-    overlay.className = "article-segment";
-    overlay.setAttribute("article-part", id);
+  // Overlay
+  const overlay = document.createElement("div");
+  overlay.className = "article-segment";
+  overlay.setAttribute("article-part", id);
+  overlay.dataset.art = artId;
 
-const tiledImage = viewer.world.getItemAt(0);
-const { x, y, w, h } = art.xywh;
+  const tiledImage = viewer.world.getItemAt(0);
+  const { x, y, w, h } = art.xywh;
 
-const imageRect = new OpenSeadragon.Rect(x, y, w, h);
-const viewportRect = tiledImage.imageToViewportRectangle(imageRect);
+  const imageRect = new OpenSeadragon.Rect(x, y, w, h);
+  const viewportRect = tiledImage.imageToViewportRectangle(imageRect);
 
-viewer.addOverlay({
-  element: overlay,
-  location: viewportRect
-});
+  viewer.addOverlay({
+    element: overlay,
+    location: viewportRect
+  });
 
-    overlay.addEventListener("mouseover", () => overlay.classList.add("article-hover"));
-    overlay.addEventListener("mouseout", () => overlay.classList.remove("article-hover"));
-    overlay.addEventListener("click", () => {zoomToArticle(viewer, art); toggleArticleContent(artId);});
+  overlay.addEventListener("mouseover", () => overlay.classList.add("article-hover"));
+  overlay.addEventListener("mouseout", () => overlay.classList.remove("article-hover"));
+  overlay.addEventListener("click", () => {
+    zoomToArticle(viewer, art);
+    toggleArticleContent(artId);
+  });
 
-    // UI
-    const wrapper = document.createElement("div");
+  // UI
+  const wrapper = document.createElement("div");
 
-    const btn = document.createElement("button");
-    btn.textContent = artId;
-    btn.onclick = () => {
-      zoomToArticle(viewer, art);
-      content.style.display = content.style.display === "none" ? "block" : "none";
-    };
+  const btn = document.createElement("button");
+  btn.textContent = artId;
+  btn.onclick = () => {
+    zoomToArticle(viewer, art);
+    toggleArticleContent(artId);
+  };
 
-    const content = document.createElement("div");
-    content.className = "article-content";
-    content.textContent = art.text;
+  const content = document.createElement("div");
+  content.className = "article-content";
+  content.textContent = art.text;
+  content.dataset.art = artId;
 
-    wrapper.appendChild(btn);
-    wrapper.appendChild(content);
-    container.appendChild(wrapper);
+  wrapper.appendChild(btn);
+  wrapper.appendChild(content);
+  container.appendChild(wrapper);
 
-    counter++;
-  }
+  counter++;
+}
 }
 
 // ================================
