@@ -62,12 +62,20 @@ async function init() {
   const manifest = await manifestResp.json();
 
   /* 2. Sacar info.json automáticamente */
+  const canvases = manifest.items || manifest.sequences[0].canvases;
+  const canvas = canvases[0];
 
-  const canvas = manifest.items[0];
-  const imageService =
-    canvas.items[0].items[0].body.service[0]['@id'];
+  const image =
+    canvas.items?.[0]?.items?.[0]?.body ||   // IIIF v3
+    canvas.images?.[0]?.resource;            // IIIF v2
 
-  const INFO_JSON_URL = imageService + "/info.json";
+  const service = Array.isArray(image.service)
+    ? image.service[0]
+    : image.service;
+
+  const infoJsonUrl = (service.id || service['@id']) + "/info.json";
+
+  console.log("INFO.JSON:", infoJsonUrl);
 
   /* 3. Inicializar OpenSeadragon */
   const viewer = OpenSeadragon({
