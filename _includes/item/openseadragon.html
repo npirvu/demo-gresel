@@ -79,7 +79,8 @@ async function init() {
   });
 
   viewer.addHandler("open", async () => {
-    const articles = await loadAnnotations(canvas, imgWidth, imgHeight);
+    const articles = await loadAnnotations(canvas);
+    console.log("ARTICLES PARSED:", articles);
     renderArticles(viewer, articles);
   });
 }
@@ -207,4 +208,3 @@ init();
 
 </body>
 </html>
-
