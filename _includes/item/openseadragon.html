@@ -85,8 +85,13 @@ async function init() {
   });
 
   viewer.addHandler("open", async () => {
+    const response = await fetch(MANIFEST_URL);
+    const manifest = await response.json();
+
     const articles = await loadAnnotations(manifest);
-    renderArticles(viewer, articles);
+    console.log("FINAL ARTICLES:", articles);
+
+    renderArticles(articles);
   });
 }
 
@@ -119,7 +124,7 @@ async function loadAnnotations(manifest) {
 
         const body = Array.isArray(ann.body) ? ann.body[0] : ann.body;
         const text = body?.value || "Sin texto";
-        
+
         const target = ann.target || ann.on;
 
         let selector = null;
@@ -159,7 +164,7 @@ async function loadAnnotations(manifest) {
       }
     }
   }
-
+  console.log("ARTICLES PARSED:", articles);
   return articles;
 }
 
@@ -179,14 +184,16 @@ function renderArticles(viewer, articles) {
     overlay.className = "article-segment";
     overlay.setAttribute("article-part", id);
 
+    const imageRect = viewer.viewport.imageToViewportRectangle(
+      art.block.x * viewer.world.getItemAt(0).getContentSize().x,
+      art.block.y * viewer.world.getItemAt(0).getContentSize().y,
+      art.block.w * viewer.world.getItemAt(0).getContentSize().x,
+      art.block.h * viewer.world.getItemAt(0).getContentSize().y
+    )
+
     viewer.addOverlay({
       element: overlay,
-      location: new OpenSeadragon.Rect(
-        art.block.x,
-        art.block.y,
-        art.block.w,
-        art.block.h
-      )
+      location: imageRect
     });
 
     overlay.onmouseover = () => overlay.classList.add("article-hover");
