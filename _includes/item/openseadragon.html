@@ -5,85 +5,96 @@
 <title>IIIF Articles Viewer (OpenSeadragon)</title>
 
 <link rel="stylesheet" href="https://viewer.library.wales/viewer-custom.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/universalviewer@4.0.0/dist/umd/UV.js"></script>
+
+<!-- Your custom UV CSS -->
+<link rel="stylesheet" href="https://viewer.library.wales/viewer-custom.css">
 
 <style>
-  #osd { width: 100%; height: 700px; border: 1px solid #ccc; }
+  #uv {
+    width: 100%;
+    height: 700px;
+  }
+
   .article-segment {
+    position: absolute;
     border: 2px solid rgba(255,0,0,0.6);
     background: rgba(255,0,0,0.15);
     cursor: pointer;
-    position: absolute;
   }
-  .article-segment.article-hover { background: rgba(255,0,0,0.3); }
-  .article-segment.active { border-color: blue; background: rgba(0,0,255,0.2); }
-  #article-buttons button { margin: 0.2em; }
-  #article-contents { margin-top: 1em; padding: 0.5em; border: 1px solid #ccc; }
+
+  .article-segment:hover {
+    background: rgba(255,0,0,0.3);
+  }
+
+  .article-segment.active {
+    border-color: blue;
+    background: rgba(0,0,255,0.2);
+  }
+
+  #article-buttons {
+    margin-top: 1em;
+  }
+
+  #article-buttons button {
+    margin-bottom: 0.3em;
+    display: block;
+  }
+
+  .article-content {
+    margin-left: 1em;
+    display: none;
+  }
 </style>
 </head>
 
 <body>
 
-<h2>IIIF Articles Viewer</h2>
-<div id="osd"></div>
+<h2>IIIF Viewer with OCR Articles</h2>
+
+<div id="uv"></div>
 
 <h3>OCR Transcriptions</h3>
 <div id="article-buttons"></div>
 
-
 <script>
-const MANIFEST_URL = "{{ page.object_location || relative_url }}";  // tu manifest IIIF
+const MANIFEST_URL = "{{ page.object_location | relative_url }}";
 
-async function init() {
+const uv = UV.init("uv", {
+  manifest: MANIFEST_URL,
+  locale: "en-GB"
+});
 
-  // 1️⃣ Cargar manifest
-  const manifestResp = await fetch(MANIFEST_URL);
-  const manifest = await manifestResp.json();
+uv.on("open", async function () {
 
-  // 2️⃣ Obtener info.json del primer canvas
+  // 🔹 Access internal OpenSeadragon
+  const viewer = uv.getViewer();
+
+  // 🔹 Load manifest
+  const manifest = await (await fetch(MANIFEST_URL)).json();
   const canvas = manifest.sequences[0].canvases[0];
-  const image = canvas.images[0].resource;
-  const service = Array.isArray(image.service) ? image.service[0] : image.service;
-  const infoJsonUrl = (service['@id'] || service.id) + "/info.json";
 
-  console.log("INFO.JSON:", infoJsonUrl);
+  const articles = await loadAnnotations(canvas);
+  renderArticles(viewer, articles);
+});
 
-  // 3️⃣ Inicializar OpenSeadragon
-  const viewer = OpenSeadragon({
-    id: "osd",
-    prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
-    tileSources: infoJsonUrl,
-    showNavigator: true
-  });
-
-  viewer.addHandler("open", async () => {
-    const articles = await loadAnnotations(canvas);
-    console.log("ARTICLES PARSED:", articles);
-    renderArticles(viewer, articles);
-  });
-}
-
-// ================================
-// CARGA ANOTACIONES V2
-// ================================
+/* ================================
+   LOAD IIIF v2 ANNOTATIONS
+================================ */
 async function loadAnnotations(canvas) {
   const articles = {};
-
   const pages = canvas.otherContent || [];
+  let counter = 1;
 
   for (const page of pages) {
-    // Traer archivo JSON de anotaciones
     const pageData = await (await fetch(page['@id'] || page.id)).json();
     const annotations = pageData.resources || [];
 
     for (const ann of annotations) {
-      const id = ann['@id'] || ann.id;
 
-      // texto
       const text = ann.resource?.chars || "Sin texto";
-
-      // xywh en la URL
       const on = ann.on || "";
+
       const m = on.match(/xywh=(\d+),(\d+),(\d+),(\d+)/);
       if (!m) continue;
 
@@ -92,38 +103,40 @@ async function loadAnnotations(canvas) {
       const w = parseInt(m[3]);
       const h = parseInt(m[4]);
 
-      const block = {
-        x: x / canvas.width,
-        y: y / canvas.height,
-        w: w / canvas.width,
-        h: h / canvas.height
+      const id = "ART" + counter;
+
+      articles[id] = {
+        id,
+        text,
+        block: {
+          x: x / canvas.width,
+          y: y / canvas.height,
+          w: w / canvas.width,
+          h: h / canvas.height
+        }
       };
 
-      articles[id] = { id, text, block };
+      counter++;
     }
   }
 
   return articles;
 }
 
-// ================================
-// RENDER
-// ================================
+/* ================================
+   RENDER ARTICLES
+================================ */
 function renderArticles(viewer, articles) {
   const container = document.getElementById("article-buttons");
-  container.innerHTML = ""; // limpiar
+  container.innerHTML = "";
 
-  let counter = 1;
+  for (const key in articles) {
+    const art = articles[key];
 
-  for (const id in articles) {
-    const art = articles[id];
-
-    const artId = "ART" + counter; // nombre numerado
-
-    // Overlay
+    // 🔹 Overlay
     const overlay = document.createElement("div");
     overlay.className = "article-segment";
-    overlay.setAttribute("article-part", id);
+    overlay.dataset.article = art.id;
 
     viewer.addOverlay({
       element: overlay,
@@ -135,43 +148,32 @@ function renderArticles(viewer, articles) {
       )
     });
 
-    overlay.addEventListener("mouseover", () => overlay.classList.add("article-hover"));
-    overlay.addEventListener("mouseout", () => overlay.classList.remove("article-hover"));
-    overlay.addEventListener("click", () => zoomToArticle(viewer, art));
+    overlay.onclick = () => zoomToArticle(viewer, art);
 
-    // Crear contenedor de botón + contenido
+    // 🔹 Button + expandable text
     const wrapper = document.createElement("div");
-    wrapper.style.marginBottom = "0.5em";
 
-    // Botón numerado
     const btn = document.createElement("button");
-    btn.textContent = artId;
-    btn.style.display = "block";
+    btn.textContent = art.id;
     btn.onclick = () => {
       zoomToArticle(viewer, art);
-      const contentDiv = wrapper.querySelector(".article-content");
-      contentDiv.style.display = contentDiv.style.display === "none" ? "block" : "none";
+      content.style.display =
+        content.style.display === "none" ? "block" : "none";
     };
+
+    const content = document.createElement("div");
+    content.className = "article-content";
+    content.textContent = art.text;
+
     wrapper.appendChild(btn);
-
-    // Contenido debajo del botón
-    const contentDiv = document.createElement("div");
-    contentDiv.className = "article-content";
-    contentDiv.textContent = art.text;
-    contentDiv.style.display = "none"; // inicialmente oculto
-    contentDiv.style.marginLeft = "1em";
-    wrapper.appendChild(contentDiv);
-
+    wrapper.appendChild(content);
     container.appendChild(wrapper);
-
-    counter++;
   }
 }
 
-
-// ================================
-// ZOOM A ARTÍCULO
-// ================================
+/* ================================
+   ZOOM
+================================ */
 function zoomToArticle(viewer, article) {
   const b = article.block;
   const rect = new OpenSeadragon.Rect(
@@ -180,16 +182,15 @@ function zoomToArticle(viewer, article) {
     b.w + 0.02,
     b.h + 0.02
   );
+
   viewer.viewport.fitBounds(rect);
 
-  document.querySelectorAll(".article-segment").forEach(el => el.classList.remove("active"));
-  document.querySelectorAll(`[article-part="${article.id}"]`).forEach(el => el.classList.add("active"));
-}
+  document.querySelectorAll(".article-segment")
+    .forEach(el => el.classList.remove("active"));
 
-// ================================
-// ARRANQUE
-// ================================
-init();
+  document.querySelectorAll(`[data-article="${article.id}"]`)
+    .forEach(el => el.classList.add("active"));
+}
 </script>
 
 </body>
