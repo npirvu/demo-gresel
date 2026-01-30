@@ -140,6 +140,8 @@ function renderArticles(viewer, articles) {
   for (const id in articles) {
     const art = articles[id];
     const artId = "ART" + counter;
+    overlay.dataset.art = artId;
+    content.dataset.art = artId;
 
     // Overlay
     const overlay = document.createElement("div");
@@ -159,7 +161,7 @@ viewer.addOverlay({
 
     overlay.addEventListener("mouseover", () => overlay.classList.add("article-hover"));
     overlay.addEventListener("mouseout", () => overlay.classList.remove("article-hover"));
-    overlay.addEventListener("click", () => zoomToArticle(viewer, art));
+    overlay.addEventListener("click", () => {zoomToArticle(viewer, art); toggleArticleContent(artId);});
 
     // UI
     const wrapper = document.createElement("div");
@@ -202,6 +204,15 @@ function zoomToArticle(viewer, article) {
     .forEach(el => el.classList.add("active"));
 }
 
+function toggleArticleContent(artId) {
+  document.querySelectorAll(".article-content").forEach(el => {
+    if (el.dataset.art === artId) {
+      el.style.display = el.style.display === "block" ? "none" : "block";
+    } else {
+      el.style.display = "none";
+    }
+  });
+}
 
 // ================================
 // ARRANQUE
