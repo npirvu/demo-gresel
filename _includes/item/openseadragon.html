@@ -79,7 +79,7 @@ async function init() {
   });
 
   viewer.addHandler("open", async () => {
-    const articles = await loadAnnotations(canvas, imgWidth, imgHeight);
+    const articles = await loadAnnotations(canvas);
     console.log("ARTICLES PARSED:", articles);
     renderArticles(viewer, articles);
   });
@@ -88,9 +88,12 @@ async function init() {
 // ================================
 // CARGA ANOTACIONES IIIF v2
 // ================================
-async function loadAnnotations(canvas, imgWidth, imgHeight) {
+async function loadAnnotations(canvas) {
   const articles = {};
   const pages = canvas.otherContent || [];
+
+  const canvasWidth = canvas.width;
+  const canvasHeight = canvas.height;
 
   for (const page of pages) {
     const pageData = await (await fetch(page['@id'] || page.id)).json();
@@ -113,10 +116,10 @@ async function loadAnnotations(canvas, imgWidth, imgHeight) {
         id,
         text,
         block: {
-          x: x / imgWidth,
-          y: y / imgHeight,
-          w: w / imgWidth,
-          h: h / imgHeight
+          x: x / canvasWidth,
+          y: y / canvasHeight,
+          w: w / canvasWidth,
+          h: h / canvasHeight
         }
       };
     }
@@ -124,6 +127,7 @@ async function loadAnnotations(canvas, imgWidth, imgHeight) {
 
   return articles;
 }
+
 
 // ================================
 // RENDER
