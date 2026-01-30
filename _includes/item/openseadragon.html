@@ -58,53 +58,85 @@
 <div id="article-contents"></div>
 
 <script>
+/* ================================
+   CONFIG
+================================ */
 const MANIFEST_URL = "{{ page.object_location | relative_url }}";
 
+/* ================================
+   INIT
+================================ */
 async function init() {
 
-  // 1️⃣ Cargar manifest
+  /* 1. Cargar manifest */
   const manifestResp = await fetch(MANIFEST_URL);
   const manifest = await manifestResp.json();
 
-  // 2️⃣ Obtener info.json del primer canvas
-  const canvas = manifest.items ? manifest.items[0] : manifest.sequences[0].canvases[0];
-  const image = canvas.items?.[0]?.items?.[0]?.body || canvas.images[0]?.resource;
-  const service = Array.isArray(image.service) ? image.service[0] : image.service;
+  /* 2. Sacar info.json automáticamente */
+  const canvases = manifest.items || manifest.sequences[0].canvases;
+  const canvas = canvases[0];
+
+  const image =
+    canvas.items?.[0]?.items?.[0]?.body ||   // IIIF v3
+    canvas.images?.[0]?.resource;            // IIIF v2
+
+  const service = Array.isArray(image.service)
+    ? image.service[0]
+    : image.service;
+
   const infoJsonUrl = (service.id || service['@id']) + "/info.json";
 
   console.log("INFO.JSON:", infoJsonUrl);
 
-  // 3️⃣ Inicializar OpenSeadragon
+  /* 3. Inicializar OpenSeadragon */
   const viewer = OpenSeadragon({
     id: "osd",
     prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
     tileSources: infoJsonUrl,
-    showNavigator: true
+    showNavigator: true,
+    showRotationControl: true
   });
 
-  // 4️⃣ Cargar anotaciones
-  const articles = await loadAnnotations(manifest, canvas);
-  console.log("ARTICLES PARSED:", articles);
+  viewer.addHandler("open", async () => {
+    const response = await fetch(MANIFEST_URL);
+    const manifest = await response.json();
 
-  // 5️⃣ Render overlays y botones
-  renderArticles(viewer, articles);
+    const articles = await loadAnnotations(manifest);
+    console.log("FINAL ARTICLES:", articles);
+
+    renderArticles(articles);
+  });
 }
 
-// ================================
-// ANNOTATIONS = ARTÍCULOS
-// ================================
+/* ================================
+   ANNOTATIONS = ARTÍCULOS
+================================ */
 async function loadAnnotations(manifest, canvas) {
+
   const articles = {};
   const canvases = manifest.items || manifest.sequences[0].canvases;
 
   for (const c of canvases) {
-    const pages = c.annotations || c.otherContent || [];
+
+    const pages =
+      c.annotations ||    // v3
+      c.otherContent ||   // v2
+      [];
+
     for (const page of pages) {
-      const pageData = page.items ? page : await (await fetch(page.id || page['@id'])).json();
-      const annotations = pageData.items || pageData.resources || [];
+
+      const pageData = page.items
+        ? page
+        : await (await fetch(page.id || page['@id'])).json();
+
+      const annotations = Array.isArray(pageData)
+        ? pageData
+        : pageData.items || pageData.resources || [];
 
       for (const ann of annotations) {
+
         const id = ann.id || ann['@id'];
+
         const body = Array.isArray(ann.body) ? ann.body[0] : ann.body;
         const text = body?.value || "Sin texto";
 
@@ -114,7 +146,7 @@ async function loadAnnotations(manifest, canvas) {
           target?.selector?.[0]?.value ||
           target;
 
-        const m = selector?.match(/xywh=pixel:(\d+),(\d+),(\d+),(\d+)/);
+        const m = selector.match(/xywh=pixel:(\d+),(\d+),(\d+),(\d+)/);
         if (!m) continue;
 
         const x = parseInt(m[1]);
@@ -133,12 +165,13 @@ async function loadAnnotations(manifest, canvas) {
       }
     }
   }
+  console.log("ARTICLES PARSED:", articles);
   return articles;
 }
 
-// ================================
-// RENDER OVERLAYS Y BOTONES
-// ================================
+/* ================================
+   RENDER
+================================ */
 function renderArticles(viewer, articles) {
   const buttons = document.getElementById("article-buttons");
   const contents = document.getElementById("article-contents");
