@@ -111,11 +111,15 @@ async function loadAnnotations(canvas) {
 // RENDER
 // ================================
 function renderArticles(viewer, articles) {
-  const buttons = document.getElementById("article-buttons");
-  const contents = document.getElementById("article-contents");
+  const container = document.getElementById("article-buttons");
+  container.innerHTML = ""; // limpiar
+
+  let counter = 1;
 
   for (const id in articles) {
     const art = articles[id];
+
+    const artId = "ART" + counter; // nombre numerado
 
     // Overlay
     const overlay = document.createElement("div");
@@ -136,19 +140,35 @@ function renderArticles(viewer, articles) {
     overlay.addEventListener("mouseout", () => overlay.classList.remove("article-hover"));
     overlay.addEventListener("click", () => zoomToArticle(viewer, art));
 
-    // Botón
-    const btn = document.createElement("button");
-    btn.textContent = art.text;  // mostrar el texto en lugar de id
-    btn.onclick = () => zoomToArticle(viewer, art);
-    buttons.appendChild(btn);
+    // Crear contenedor de botón + contenido
+    const wrapper = document.createElement("div");
+    wrapper.style.marginBottom = "0.5em";
 
-    // Contenido
-    const div = document.createElement("div");
-    div.id = "content-" + id;
-    div.textContent = art.text;
-    contents.appendChild(div);
+    // Botón numerado
+    const btn = document.createElement("button");
+    btn.textContent = artId;
+    btn.style.display = "block";
+    btn.onclick = () => {
+      zoomToArticle(viewer, art);
+      const contentDiv = wrapper.querySelector(".article-content");
+      contentDiv.style.display = contentDiv.style.display === "none" ? "block" : "none";
+    };
+    wrapper.appendChild(btn);
+
+    // Contenido debajo del botón
+    const contentDiv = document.createElement("div");
+    contentDiv.className = "article-content";
+    contentDiv.textContent = art.text;
+    contentDiv.style.display = "none"; // inicialmente oculto
+    contentDiv.style.marginLeft = "1em";
+    wrapper.appendChild(contentDiv);
+
+    container.appendChild(wrapper);
+
+    counter++;
   }
 }
+
 
 // ================================
 // ZOOM A ARTÍCULO
