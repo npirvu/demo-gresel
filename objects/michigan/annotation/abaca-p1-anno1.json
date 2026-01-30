@@ -1,4 +1,47 @@
-{
+[
+  {
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json",
+  "@type": "sc:AnnotationList",
+
+  "resources": [
+    {
+      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json",
+      "@type": "oa:Annotation",
+      "motivation": "sc:painting",
+
+      "resource": {
+        "@type": "cnt:ContentAsText",
+        "format": "text/plain",
+        "chars": "757752"
+      },
+
+      "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0#xywh=1689,157,595,135"
+    }
+  ]},
+
+    {
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json",
+  "@type": "sc:AnnotationList",
+
+  "resources": [
+    {
+      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json",
+      "@type": "oa:Annotation",
+      "motivation": "sc:painting",
+
+      "resource": {
+        "@type": "cnt:ContentAsText",
+        "format": "text/plain",
+        "chars": "THE PHILIPPINE ISLANDS"
+      },
+
+      "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0#xywh=162,216,2252,239"
+    }
+  ]},
+
+  {
   "@context": "http://iiif.io/api/presentation/2/context.json",
   "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json",
   "@type": "sc:AnnotationList",
@@ -17,5 +60,47 @@
 
       "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0#xywh=244,3301,2110,222"
     }
-  ]
-}
+  ]},
+
+  {
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json",
+  "@type": "sc:AnnotationList",
+
+  "resources": [
+    {
+      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json",
+      "@type": "oa:Annotation",
+      "motivation": "sc:painting",
+
+      "resource": {
+        "@type": "cnt:ContentAsText",
+        "format": "text/plain",
+        "chars": "PANAMA PACIFIC"
+      },
+
+      "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0#xywh=152,3561,2354,255"
+    }
+  ]},
+
+  {
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json",
+  "@type": "sc:AnnotationList",
+
+  "resources": [
+    {
+      "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno1.json",
+      "@type": "oa:Annotation",
+      "motivation": "sc:painting",
+
+      "resource": {
+        "@type": "cnt:ContentAsText",
+        "format": "text/plain",
+        "chars": "INTERNATIONAL EXPOSITION SN. FRANCISCO CALIFORNIA"
+      },
+
+      "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0#xywh=152,3843,2359,487"
+    }
+  ]}
+]
