@@ -137,15 +137,15 @@ function renderArticles(viewer, articles) {
 
   let counter = 1;
 
-for (const id in articles) {
-  const art = articles[id];
-  const artId = "ART" + counter;
+  for (const id in articles) {
+    const art = articles[id];
+    const artId = "ART" + counter;
 
   // Overlay
   const overlay = document.createElement("div");
-  overlay.className = "article-segment";
-  overlay.setAttribute("article-part", id);
-  overlay.dataset.art = artId;
+    overlay.className = "article-segment";
+    overlay.setAttribute("article-part", id);
+    overlay.dataset.art = artId;
 
   const tiledImage = viewer.world.getItemAt(0);
   const { x, y, w, h } = art.xywh;
@@ -160,10 +160,15 @@ for (const id in articles) {
 
   overlay.addEventListener("mouseover", () => overlay.classList.add("article-hover"));
   overlay.addEventListener("mouseout", () => overlay.classList.remove("article-hover"));
-  overlay.addEventListener("click", () => {
-    zoomToArticle(viewer, art);
-    toggleArticleContent(artId);
-  });
+
+  new OpenSeadragon.MouseTracker({
+    element: overlay,
+    clickHandler: function () {
+      zoomToArticle(viewer, art);
+      toggleArticleContent(artId);
+  }
+});
+
 
   // UI
   const wrapper = document.createElement("div");
