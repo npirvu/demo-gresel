@@ -118,7 +118,9 @@ async function loadAnnotations(manifest) {
         ? page
         : await (await fetch(page.id || page['@id'])).json();
 
-      const annotations = pageData.items || pageData.resources || [];
+      const annotations = Array.isArray(pageData)
+        ? pageData
+        : pageData.items || pageData.resources || [];
 
       for (const ann of annotations) {
 
