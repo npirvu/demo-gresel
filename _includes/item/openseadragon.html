@@ -59,21 +59,47 @@
   #article-buttons button {
     display: block;
     width: 100%;
-    padding: 0.6em 0.8em;
-    margin-bottom: 0.2em;
+    padding: 0.3em 0.6em;     /* 👈 más pequeño */
+    margin-bottom: 0.15em;
     text-align: left;
-    background: rgba(234, 238, 225, 0.763);
-    border: 1px solid rgba(84, 114, 6, 0.392);
-    border-radius: 4px;
+
+    background: rgba(234, 238, 225, 0.85);
+    border: 1px solid rgba(84, 114, 6, 0.35);
+    border-radius: 3px;
+
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 500;        /* menos pesado */
+    font-size: 0.85em;       /* 👈 clave */
+    line-height: 1.2;
+  }
+
+  #article-buttons button:hover {
+    background: rgba(210, 220, 190, 0.9);
   }
 
   .article-content {
-    display: none;
-    padding: 0.5em 1em;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+
+    padding: 0 1em;               /* padding vertical animable */
     border-left: 3px solid rgba(131, 232, 0, 0.341);
     text-align: left;
+
+    font-size: 0.85em;
+    line-height: 1.4;
+
+    transition:
+      max-height 0.35s ease,
+      opacity 0.25s ease,
+      padding 0.25s ease;
+  }
+
+  /* estado abierto */
+  .article-content.open {
+    max-height: 500px;            /* suficiente para OCR */
+    opacity: 1;
+    padding: 0.5em 1em;
   }
 
 </style>
