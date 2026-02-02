@@ -49,18 +49,19 @@
 </head>
 
 <body>
-    
+
+<h2>IIIF Articles Viewer</h2>    
+
 <div id="osd-controls">
   <button id="prev-page">Anterior</button>
   <button id="next-page">Siguiente</button>
   <span id="page-indicator">Página 1 / N</span>
 </div>
 
+<div id="osd"></div>
+
 <h3>OCR Transcriptions</h3>
 <div id="article-buttons"></div>
-
-<h2>IIIF Articles Viewer</h2>
-<div id="osd"></div>
 
 <script>
 const MANIFEST_URL = "{{ page.object_location || relative_url }}";
