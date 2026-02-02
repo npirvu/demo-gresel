@@ -281,9 +281,9 @@ function zoomToArticle(viewer, article) {
 function toggleArticleContent(artId) {
   document.querySelectorAll(".article-content").forEach(el => {
     if (el.dataset.art === artId) {
-      el.style.display = el.style.display === "block" ? "none" : "block";
+      el.classList.toggle("open");
     } else {
-      el.style.display = "none";
+      el.classList.remove("open");
     }
   });
 }
