@@ -78,7 +78,6 @@
   }
 
   .article-content {
-    white-space: pre-wrap;;
     max-height: 0;
     overflow: hidden;
     opacity: 0;
@@ -257,6 +256,7 @@ function renderArticles(viewer, articles) {
 
     const content = document.createElement("div");
     content.className = "article-content";
+    content.innerHTML = annotationText.replace(/\n/g, "<br>");
     content.textContent = art.text;
     content.dataset.art = artId;
 
