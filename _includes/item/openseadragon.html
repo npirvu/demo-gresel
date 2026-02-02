@@ -187,7 +187,7 @@ async function loadAnnotations(canvas) {
       const id = ann['@id'] || ann.id;
       const text = ann.resource?.chars || "Sin texto";
 
-      const m = (ann.on || "").match(/xywh=pixel:(\d+),(\d+),(\d+),(\d+)/);
+      const m = (ann.on || "").match(/xywh=(\d+),(\d+),(\d+),(\d+)/);
       if (!m) continue;
 
       articles[id] = {
