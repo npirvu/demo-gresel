@@ -12,7 +12,7 @@
     width: 100%;
     height: 800px;
     border: 1px solid #88ea1230;
-    background: #171717
+    background: #171717;
   }
 
   #osd-controls {
@@ -32,8 +32,8 @@
     border: 1px solid #444;
     padding: 0.15em 0.4em;
     font-size: 0.8em;
-    line-height: 1;
     border-radius: 4px;
+    cursor: pointer;
   }
 
   #osd-controls button:hover {
@@ -44,6 +44,10 @@
     color: #bbb;
     font-size: 0.75em;
     margin-left: auto;
+  }
+
+  .article-segment {
+    position: absolute;
   }
 
   .article-segment.article-hover {
@@ -59,18 +63,15 @@
   #article-buttons button {
     display: block;
     width: 100%;
-    padding: 0.3em 0.6em;     /* 👈 más pequeño */
+    padding: 0.3em 0.6em;
     margin-bottom: 0.15em;
     text-align: left;
-
     background: rgba(234, 238, 225, 0.85);
     border: 1px solid rgba(84, 114, 6, 0.35);
     border-radius: 3px;
-
     cursor: pointer;
-    font-weight: 500;        /* menos pesado */
-    font-size: 0.85em;       /* 👈 clave */
-    line-height: 1.2;
+    font-size: 0.85em;
+    font-weight: 500;
   }
 
   #article-buttons button:hover {
@@ -81,33 +82,24 @@
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-
-    padding: 0 1em;               /* padding vertical animable */
+    padding: 0 1em;
     border-left: 3px solid rgba(131, 232, 0, 0.341);
-    text-align: left;
-
     font-size: 0.85em;
     line-height: 1.4;
-
-    transition:
-      max-height 0.35s ease,
-      opacity 0.25s ease,
-      padding 0.25s ease;
+    transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.25s ease;
   }
 
-  /* estado abierto */
   .article-content.open {
-    max-height: 500px;            /* suficiente para OCR */
+    max-height: 500px;
     opacity: 1;
     padding: 0.5em 1em;
   }
-
 </style>
 </head>
 
 <body>
 
-<h2>IIIF Articles Viewer</h2>    
+<h2>IIIF Articles Viewer</h2>
 
 <div id="osd-controls">
   <button id="prev-page">Anterior</button>
@@ -123,47 +115,64 @@
 <script>
 const MANIFEST_URL = "{{ page.object_location || relative_url }}";
 
+let viewer;
+let canvases = [];
+let currentPage = 0;
+
+// ================================
+// INIT
+// ================================
 async function init() {
-
-  // 1️⃣ Cargar manifest
   const manifest = await (await fetch(MANIFEST_URL)).json();
+  canvases = manifest.sequences[0].canvases;
 
-  // 2️⃣ Primer canvas
-  const canvas = manifest.sequences[0].canvases[0];
-
-  // 3️⃣ info.json de la imagen
-  const image = canvas.images[0].resource;
-  const service = Array.isArray(image.service) ? image.service[0] : image.service;
-  const infoJsonUrl = (service['@id'] || service.id) + "/info.json";
-  const info = await (await fetch(infoJsonUrl)).json();
-
-  const imgWidth = info.width;
-  const imgHeight = info.height;
-
-  // 4️⃣ OpenSeadragon
-  const viewer = OpenSeadragon({
+  viewer = OpenSeadragon({
     id: "osd",
     prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
-    tileSources: infoJsonUrl,
     showNavigator: true
   });
 
-  viewer.addHandler("open", async () => {
+  document.getElementById("prev-page").onclick = () => {
+    if (currentPage > 0) loadPage(currentPage - 1);
+  };
+
+  document.getElementById("next-page").onclick = () => {
+    if (currentPage < canvases.length - 1) loadPage(currentPage + 1);
+  };
+
+  loadPage(0);
+}
+
+// ================================
+// LOAD PAGE
+// ================================
+async function loadPage(index) {
+  currentPage = index;
+  const canvas = canvases[index];
+
+  const image = canvas.images[0].resource;
+  const service = Array.isArray(image.service) ? image.service[0] : image.service;
+  const infoJsonUrl = (service['@id'] || service.id) + "/info.json";
+
+  viewer.open(infoJsonUrl);
+
+  viewer.addOnceHandler("open", async () => {
+    viewer.clearOverlays();
+
     const articles = await loadAnnotations(canvas);
-    console.log("ARTICLES PARSED:", articles);
     renderArticles(viewer, articles);
+
+    document.getElementById("page-indicator").textContent =
+      `Página ${index + 1} / ${canvases.length}`;
   });
 }
 
 // ================================
-// CARGA ANOTACIONES IIIF v2
+// LOAD ANNOTATIONS
 // ================================
 async function loadAnnotations(canvas) {
   const articles = {};
   const pages = canvas.otherContent || [];
-
-  const canvasWidth = canvas.width;
-  const canvasHeight = canvas.height;
 
   for (const page of pages) {
     const pageData = await (await fetch(page['@id'] || page.id)).json();
@@ -173,29 +182,26 @@ async function loadAnnotations(canvas) {
       const id = ann['@id'] || ann.id;
       const text = ann.resource?.chars || "Sin texto";
 
-      const on = ann.on || "";
-      const m = on.match(/xywh=pixel:(\d+),(\d+),(\d+),(\d+)/);
+      const m = (ann.on || "").match(/xywh=pixel:(\d+),(\d+),(\d+),(\d+)/);
       if (!m) continue;
 
-      const x = parseInt(m[1], 10);
-      const y = parseInt(m[2], 10);
-      const w = parseInt(m[3], 10);
-      const h = parseInt(m[4], 10);
-
-    articles[id] = {
-      id,
-      text,
-      xywh: { x, y, w, h }   // ← IMPORTANTE
-    };
+      articles[id] = {
+        id,
+        text,
+        xywh: {
+          x: +m[1],
+          y: +m[2],
+          w: +m[3],
+          h: +m[4]
+        }
+      };
     }
   }
-
   return articles;
 }
 
-
 // ================================
-// RENDER
+// RENDER ARTICLES
 // ================================
 function renderArticles(viewer, articles) {
   const container = document.getElementById("article-buttons");
@@ -207,67 +213,62 @@ function renderArticles(viewer, articles) {
     const art = articles[id];
     const artId = "ART" + counter;
 
-  // Overlay
-  const overlay = document.createElement("div");
+    const overlay = document.createElement("div");
     overlay.className = "article-segment";
-    overlay.setAttribute("article-part", id);
     overlay.dataset.art = artId;
+    overlay.setAttribute("article-part", id);
 
-  const tiledImage = viewer.world.getItemAt(0);
-  const { x, y, w, h } = art.xywh;
+    const tiledImage = viewer.world.getItemAt(0);
+    const r = art.xywh;
+    const viewportRect = tiledImage.imageToViewportRectangle(
+      new OpenSeadragon.Rect(r.x, r.y, r.w, r.h)
+    );
 
-  const imageRect = new OpenSeadragon.Rect(x, y, w, h);
-  const viewportRect = tiledImage.imageToViewportRectangle(imageRect);
+    viewer.addOverlay({ element: overlay, location: viewportRect });
 
-  viewer.addOverlay({
-    element: overlay,
-    location: viewportRect
-  });
+    overlay.addEventListener("mouseenter", () => overlay.classList.add("article-hover"));
+    overlay.addEventListener("mouseleave", () => overlay.classList.remove("article-hover"));
 
-  overlay.addEventListener("mouseover", () => overlay.classList.add("article-hover"));
-  overlay.addEventListener("mouseout", () => overlay.classList.remove("article-hover"));
+    new OpenSeadragon.MouseTracker({
+      element: overlay,
+      clickHandler: () => {
+        zoomToArticle(viewer, art);
+        toggleArticleContent(artId);
+      }
+    });
 
-  new OpenSeadragon.MouseTracker({
-    element: overlay,
-    clickHandler: function () {
+    const wrapper = document.createElement("div");
+
+    const btn = document.createElement("button");
+    btn.textContent = artId;
+    btn.onclick = () => {
       zoomToArticle(viewer, art);
       toggleArticleContent(artId);
+    };
+
+    const content = document.createElement("div");
+    content.className = "article-content";
+    content.textContent = art.text;
+    content.dataset.art = artId;
+
+    wrapper.appendChild(btn);
+    wrapper.appendChild(content);
+    container.appendChild(wrapper);
+
+    counter++;
   }
-});
-
-
-  // UI
-  const wrapper = document.createElement("div");
-
-  const btn = document.createElement("button");
-  btn.textContent = artId;
-  btn.onclick = () => {
-    zoomToArticle(viewer, art);
-    toggleArticleContent(artId);
-  };
-
-  const content = document.createElement("div");
-  content.className = "article-content";
-  content.textContent = art.text;
-  content.dataset.art = artId;
-
-  wrapper.appendChild(btn);
-  wrapper.appendChild(content);
-  container.appendChild(wrapper);
-
-  counter++;
-}
 }
 
 // ================================
 // ZOOM
 // ================================
 function zoomToArticle(viewer, article) {
+  const r = article.xywh;
   const tiledImage = viewer.world.getItemAt(0);
-  const { x, y, w, h } = article.xywh;
 
-  const imageRect = new OpenSeadragon.Rect(x, y, w, h);
-  const viewportRect = tiledImage.imageToViewportRectangle(imageRect);
+  const viewportRect = tiledImage.imageToViewportRectangle(
+    new OpenSeadragon.Rect(r.x, r.y, r.w, r.h)
+  );
 
   viewer.viewport.fitBounds(viewportRect, true);
 
@@ -278,18 +279,17 @@ function zoomToArticle(viewer, article) {
     .forEach(el => el.classList.add("active"));
 }
 
+// ================================
+// TOGGLE OCR
+// ================================
 function toggleArticleContent(artId) {
   document.querySelectorAll(".article-content").forEach(el => {
-    if (el.dataset.art === artId) {
-      el.classList.toggle("open");
-    } else {
-      el.classList.remove("open");
-    }
+    el.classList.toggle("open", el.dataset.art === artId && !el.classList.contains("open"));
   });
 }
 
 // ================================
-// ARRANQUE
+// START
 // ================================
 init();
 </script>
