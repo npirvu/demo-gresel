@@ -13,7 +13,7 @@
         "format": "text/plain",
         "chars": "757752"
       },
-      "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0#xywh=1689,157,595,135"
+      "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0#xywh=pixel:1689,157,595,135"
     },
 
     {
@@ -25,7 +25,7 @@
         "format": "text/plain",
         "chars": "THE PHILIPPINE ISLANDS"
       },
-      "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0#xywh=162,216,2252,239"
+      "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0#xywh=pixel:162,216,2252,239"
     },
 
     {
@@ -37,7 +37,7 @@
         "format": "text/plain",
         "chars": "ABACÁ (MANILA HEMP)"
       },
-      "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0#xywh=244,3301,2110,222"
+      "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0#xywh=pixel:244,3301,2110,222"
     },
 
     {
@@ -49,7 +49,7 @@
         "format": "text/plain",
         "chars": "PANAMA PACIFIC"
       },
-      "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0#xywh=152,3561,2354,255"
+      "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0#xywh=pixel:152,3561,2354,255"
     },
 
     {
@@ -61,6 +61,6 @@
         "format": "text/plain",
         "chars": "INTERNATIONAL EXPOSITION SN. FRANCISCO CALIFORNIA"
       },
-      "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0#xywh=152,3843,2359,487"
+      "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0#xywh=pixel:152,3843,2359,487"
     }]
 }
