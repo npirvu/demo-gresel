@@ -12,7 +12,7 @@
     width: 100%;
     height: 800px;
     border: 1px solid #88ea1230;
-    background: #171717;
+    background: #171717
   }
 
   #osd-controls {
@@ -32,8 +32,8 @@
     border: 1px solid #444;
     padding: 0.15em 0.4em;
     font-size: 0.8em;
+    line-height: 1;
     border-radius: 4px;
-    cursor: pointer;
   }
 
   #osd-controls button:hover {
@@ -44,10 +44,6 @@
     color: #bbb;
     font-size: 0.75em;
     margin-left: auto;
-  }
-
-  .article-segment {
-    position: absolute;
   }
 
   .article-segment.article-hover {
@@ -63,15 +59,18 @@
   #article-buttons button {
     display: block;
     width: 100%;
-    padding: 0.3em 0.6em;
+    padding: 0.3em 0.6em;     /* 👈 más pequeño */
     margin-bottom: 0.15em;
     text-align: left;
+
     background: rgba(234, 238, 225, 0.85);
     border: 1px solid rgba(84, 114, 6, 0.35);
     border-radius: 3px;
+
     cursor: pointer;
-    font-size: 0.85em;
-    font-weight: 500;
+    font-weight: 500;        /* menos pesado */
+    font-size: 0.85em;       /* 👈 clave */
+    line-height: 1.2;
   }
 
   #article-buttons button:hover {
@@ -82,24 +81,33 @@
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    padding: 0 1em;
+
+    padding: 0 1em;               /* padding vertical animable */
     border-left: 3px solid rgba(131, 232, 0, 0.341);
+    text-align: left;
+
     font-size: 0.85em;
     line-height: 1.4;
-    transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.25s ease;
+
+    transition:
+      max-height 0.35s ease,
+      opacity 0.25s ease,
+      padding 0.25s ease;
   }
 
+  /* estado abierto */
   .article-content.open {
-    max-height: 500px;
+    max-height: 500px;            /* suficiente para OCR */
     opacity: 1;
     padding: 0.5em 1em;
   }
+
 </style>
 </head>
 
 <body>
 
-<h2>IIIF Articles Viewer</h2>
+<h2>IIIF Articles Viewer</h2>    
 
 <div id="osd-controls">
   <button id="prev-page">Anterior</button>
