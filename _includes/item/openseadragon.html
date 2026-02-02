@@ -78,17 +78,16 @@
   }
 
   .article-content {
-    max-height: 0;
-    overflow: hidden;
+    white-space: pre-wrap;
+    max-height: 300px;          /* altura máxima visible */
+    overflow-y: auto;           /* añade scroll vertical */
+    overflow-x: hidden;         /* evita scroll horizontal */
     opacity: 0;
-
-    padding: 0 1em;               /* padding vertical animable */
+    padding: 0 1em;
     border-left: 3px solid rgba(131, 232, 0, 0.341);
     text-align: left;
-
     font-size: 0.85em;
     line-height: 1.4;
-
     transition:
       max-height 0.35s ease,
       opacity 0.25s ease,
@@ -256,7 +255,6 @@ function renderArticles(viewer, articles) {
 
     const content = document.createElement("div");
     content.className = "article-content";
-    content.innerHTML = annotationText.replace(/\n/g, "<br>");
     content.textContent = art.text;
     content.dataset.art = artId;
 
