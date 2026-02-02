@@ -16,19 +16,32 @@
   }
 
   #osd-controls {
-    position: absolute;
-    top: 60px;
-    left: 10px;
-    z-index: 1000;
     display: flex;
+    align-items: center;
     gap: 0.4em;
-    background: rgba(33, 71, 0, 0.6);
     padding: 0.4em;
+    background: #1f1f1f;
+    border: 1px solid #333;
     border-radius: 6px;
+    margin-bottom: 0.5em;
   }
 
-  #osd {
-    position: relative;
+  #osd-controls button {
+    background: #2a2a2a;
+    color: #eee;
+    border: 1px solid #444;
+    padding: 0.3em 0.6em;
+    border-radius: 4px;
+  }
+
+  #osd-controls button:hover {
+    background: #3a3a3a;
+  }
+
+  #page-indicator {
+    color: #bbb;
+    font-size: 0.85em;
+    margin-left: auto;
   }
 
   .article-segment.article-hover {
