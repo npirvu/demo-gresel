@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<title>PDF Viewer (OpenSeadragon)</title>
+<title>PDF Viewer con OpenSeadragon</title>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
 
 <style>
@@ -32,11 +33,18 @@
     font-size: 0.8em;
     line-height: 1;
     border-radius: 4px;
+    cursor: pointer;
   }
 
-  #osd-controls button:hover { background: #3a3a3a; }
+  #osd-controls button:hover {
+    background: #3a3a3a;
+  }
 
-  #page-indicator { color: #bbb; font-size: 0.75em; margin-left: auto; }
+  #page-indicator {
+    color: #bbb;
+    font-size: 0.75em;
+    margin-left: auto;
+  }
 
   .article-segment.article-hover {
     border: 2px solid rgba(96, 132, 5, 0.457);
@@ -63,7 +71,9 @@
     line-height: 1.2;
   }
 
-  #article-buttons button:hover { background: rgba(210, 220, 190, 0.9); }
+  #article-buttons button:hover {
+    background: rgba(210, 220, 190, 0.9);
+  }
 
   .article-content {
     white-space: pre-wrap;
@@ -73,9 +83,13 @@
     opacity: 0;
     padding: 0 1em;
     border-left: 3px solid rgba(131, 232, 0, 0.341);
+    text-align: left;
     font-size: 0.85em;
     line-height: 1.4;
-    transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.25s ease;
+    transition:
+      max-height 0.35s ease,
+      opacity 0.25s ease,
+      padding 0.25s ease;
   }
 
   .article-content.open {
@@ -85,7 +99,6 @@
   }
 </style>
 </head>
-
 <body>
 
 <div id="osd-controls">
@@ -100,151 +113,38 @@
 <div id="article-buttons"></div>
 
 <script>
-const PDF_JSON = "{{ page.object_location || relative_url }}";  // tu archivo JSON
-
-let viewer;
-let pages = [];
+const PDF_INDEX_JSON = "pdfs-index.json"; // JSON con todos los PDFs y páginas
+let pdfIndex = [];
+let currentPdfIndex = 0;
+let currentPages = [];
 let currentPage = 0;
+let viewer;
 
 // ================================
 // INIT
 // ================================
 async function init() {
-  const data = await (await fetch(PDF_JSON)).json();
-  pages = data.pages;
+  pdfIndex = await (await fetch(PDF_INDEX_JSON)).json();
+  loadPdf(pdfIndex[currentPdfIndex]);
+}
 
-  viewer = OpenSeadragon({
-    id: "osd",
-    prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
-    showNavigator: true
-  });
+// ================================
+// CARGAR PDF
+// ================================
+async function loadPdf(pdfData) {
+  currentPages = pdfData.pages;
+  currentPage = 0;
+
+  if(!viewer) {
+    viewer = OpenSeadragon({
+      id: "osd",
+      prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
+      showNavigator: true
+    });
+  }
 
   document.getElementById("prev-page").onclick = () => {
-    if (currentPage > 0) loadPage(currentPage - 1);
+    if(currentPage > 0) loadPage(currentPage - 1);
   };
 
-  document.getElementById("next-page").onclick = () => {
-    if (currentPage < pages.length - 1) loadPage(currentPage + 1);
-  };
-
-  loadPage(0);
-}
-
-// ================================
-// LOAD PAGE
-// ================================
-function loadPage(index) {
-  currentPage = index;
-  const page = pages[index];
-
-  viewer.open(page.image);
-
-  viewer.addOnceHandler("open", () => {
-    viewer.clearOverlays();
-    renderArticles(viewer, page.annotations);
-
-    document.getElementById("page-indicator").textContent =
-      `Página ${index + 1} / ${pages.length}`;
-  });
-}
-
-// ================================
-// RENDER ANNOTATIONS
-// ================================
-function renderArticles(viewer, annotations) {
-  const container = document.getElementById("article-buttons");
-  container.innerHTML = "";
-
-  let counter = 1;
-
-  for (const ann of annotations) {
-    const artId = "ART" + counter;
-
-    // Crear overlay
-    const overlay = document.createElement("div");
-    overlay.className = "article-segment";
-    overlay.dataset.art = artId;
-
-    // Calcular bounding box
-    const xs = ann.points.map(p => p[0]);
-    const ys = ann.points.map(p => p[1]);
-    const x = Math.min(...xs);
-    const y = Math.min(...ys);
-    const w = Math.max(...xs) - x;
-    const h = Math.max(...ys) - y;
-
-    const tiledImage = viewer.world.getItemAt(0);
-    const viewportRect = tiledImage.imageToViewportRectangle(
-      new OpenSeadragon.Rect(x, y, w, h)
-    );
-
-    viewer.addOverlay({ element: overlay, location: viewportRect });
-
-    overlay.addEventListener("mouseenter", () => overlay.classList.add("article-hover"));
-    overlay.addEventListener("mouseleave", () => overlay.classList.remove("article-hover"));
-
-    new OpenSeadragon.MouseTracker({
-      element: overlay,
-      clickHandler: () => {
-        zoomToArticle(viewer, { xywh: { x, y, w, h }, id: ann.id });
-        toggleArticleContent(artId);
-      }
-    });
-
-    // Crear botón y contenido OCR
-    const wrapper = document.createElement("div");
-    const btn = document.createElement("button");
-    btn.textContent = artId;
-    btn.onclick = () => {
-      zoomToArticle(viewer, { xywh: { x, y, w, h }, id: ann.id });
-      toggleArticleContent(artId);
-    };
-
-    const content = document.createElement("div");
-    content.className = "article-content";
-    content.textContent = ann.text || "";
-    content.dataset.art = artId;
-
-    wrapper.appendChild(btn);
-    wrapper.appendChild(content);
-    container.appendChild(wrapper);
-
-    counter++;
-  }
-}
-
-// ================================
-// ZOOM
-// ================================
-function zoomToArticle(viewer, article) {
-  const r = article.xywh;
-  const tiledImage = viewer.world.getItemAt(0);
-  const viewportRect = tiledImage.imageToViewportRectangle(
-    new OpenSeadragon.Rect(r.x, r.y, r.w, r.h)
-  );
-
-  viewer.viewport.fitBounds(viewportRect, true);
-
-  document.querySelectorAll(".article-segment").forEach(el => el.classList.remove("active"));
-  document.querySelectorAll(`[data-art]`).forEach(el => {
-    if (el.dataset.art === article.id) el.classList.add("active");
-  });
-}
-
-// ================================
-// TOGGLE OCR
-// ================================
-function toggleArticleContent(artId) {
-  document.querySelectorAll(".article-content").forEach(el => {
-    el.classList.toggle("open", el.dataset.art === artId && !el.classList.contains("open"));
-  });
-}
-
-// ================================
-// START
-// ================================
-init();
-</script>
-
-</body>
-</html>
+  document
