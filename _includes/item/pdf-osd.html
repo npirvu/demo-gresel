@@ -100,7 +100,7 @@
 <div id="article-buttons"></div>
 
 <script>
-const PDF_JSON = "La_Vanguardia_13-04-1944.json";  // tu archivo JSON
+const PDF_JSON = "{{ page.object_location || relative_url }}";  // tu archivo JSON
 
 let viewer;
 let pages = [];
