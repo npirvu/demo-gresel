@@ -10,7 +10,7 @@
 <script>
   const basePath = "{{ page.images_path | relative_url }}";
   const baseName = "{{ page.base_name }}";
-  const totalPages = "{{ page.num_pages }}";
+  const totalPages = {{ page.num_pages }};
 
   let currentPage = 1;
 
@@ -21,7 +21,10 @@
   });
 
   function getImageUrl(page) {
-    return `${basePath}/${baseName}-${page}.jpg`;
+    const p = Math.max(1, page); // nunca menor que 1
+    const url = `${basePath}/${baseName}-${p}.jpg`;
+    console.log("Cargando imagen:", url); // así ves exactamente qué intenta abrir
+    return url;
   }
 
   function updateViewer() {
