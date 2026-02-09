@@ -1,266 +1,48 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<title>PDF Viewer con OpenSeadragon</title>
+<div id="viewer" style="width:100%; height:600px; background:#000"></div>
+<div id="pager" style="margin-top:10px; text-align:center">
+  <button id="prev">◀ Anterior</button>
+  <span id="counter"></span>
+  <button id="next">Siguiente ▶</button>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
 
-<style>
-  #osd {
-    width: 100%;
-    height: 800px;
-    border: 1px solid #88ea1230;
-    background: #171717;
-  }
-
-  #osd-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.25em;
-    padding: 0.25em;
-    background: #1f1f1f;
-    border: 1px solid #333;
-    border-radius: 6px;
-    margin-bottom: 0.4em;
-  }
-
-  #osd-controls button {
-    background: #2a2a2a;
-    color: #eee;
-    border: 1px solid #444;
-    padding: 0.15em 0.4em;
-    font-size: 0.8em;
-    line-height: 1;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
-  #osd-controls button:hover {
-    background: #3a3a3a;
-  }
-
-  #page-indicator {
-    color: #bbb;
-    font-size: 0.75em;
-    margin-left: auto;
-  }
-
-  .article-segment.article-hover {
-    border: 2px solid rgba(96, 132, 5, 0.457);
-    background: rgba(127, 175, 7, 0.463);
-  }
-
-  .article-segment.active {
-    border-color: rgba(31, 135, 0, 0.523);
-    background: rgba(27, 108, 2, 0.423);
-  }
-
-  #article-buttons button {
-    display: block;
-    width: 100%;
-    padding: 0.3em 0.6em;    
-    margin-bottom: 0.15em;
-    text-align: left;
-    background: rgba(234, 238, 225, 0.85);
-    border: 1px solid rgba(84, 114, 6, 0.35);
-    border-radius: 3px;
-    cursor: pointer;
-    font-weight: 500;       
-    font-size: 0.85em;      
-    line-height: 1.2;
-  }
-
-  #article-buttons button:hover {
-    background: rgba(210, 220, 190, 0.9);
-  }
-
-  .article-content {
-    white-space: pre-wrap;
-    max-height: 0px;          
-    overflow-y: auto;           
-    overflow-x: hidden;         
-    opacity: 0;
-    padding: 0 1em;
-    border-left: 3px solid rgba(131, 232, 0, 0.341);
-    text-align: left;
-    font-size: 0.85em;
-    line-height: 1.4;
-    transition:
-      max-height 0.35s ease,
-      opacity 0.25s ease,
-      padding 0.25s ease;
-  }
-
-  .article-content.open {
-    max-height: 500px;           
-    opacity: 1;
-    padding: 0.5em 1em;
-  }
-</style>
-</head>
-<body>
-
-<div id="osd-controls">
-  <button id="prev-page">Anterior</button>
-  <button id="next-page">Siguiente</button>
-  <span id="page-indicator">Página 1 / N</span>
-</div>
-
-<div id="osd"></div>
-
-<h3>Transcripciones OCR</h3>
-<div id="article-buttons"></div>
-
 <script>
-const PDF_INDEX_JSON = "{{ page.object_location || relative_url }}"; // JSON con todos los PDFs y páginas
-let pdfIndex = [];
-let currentPdfIndex = 0;
-let currentPages = [];
-let currentPage = 0;
-let viewer;
+  const basePath = "{{ page.images_path | relative_url }}";
+  const baseName = "{{ page.base_name }}";
+  const totalPages = "{{ page.num_pages }}";
 
-// ================================
-// INIT
-// ================================
-async function init() {
-  pdfIndex = await (await fetch(PDF_INDEX_JSON)).json();
-  loadPdf(pdfIndex[currentPdfIndex]);
-}
+  let currentPage = 1;
 
-// ================================
-// CARGAR PDF
-// ================================
-async function loadPdf(pdfData) {
-  currentPages = pdfData.pages;
-  currentPage = 0;
+  const viewer = OpenSeadragon({
+    id: "viewer",
+    prefixUrl: "https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/images/",
+    tileSources: getImageUrl(currentPage)
+  });
 
-  if(!viewer) {
-    viewer = OpenSeadragon({
-      id: "osd",
-      prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
-      showNavigator: true
-    });
+  function getImageUrl(page) {
+    return `${basePath}/${baseName}-${page}.jpg`;
   }
 
-  document.getElementById("prev-page").onclick = () => {
-    if(currentPage > 0) loadPage(currentPage - 1);
+  function updateViewer() {
+    viewer.open(getImageUrl(currentPage));
+    document.getElementById("counter").textContent =
+      `Página ${currentPage} / ${totalPages}`;
+  }
+
+  document.getElementById("prev").onclick = () => {
+    if (currentPage > 1) {
+      currentPage--;
+      updateViewer();
+    }
   };
 
-  document.getElementById("next-page").onclick = () => {
-    if(currentPage < currentPages.length - 1) loadPage(currentPage + 1);
+  document.getElementById("next").onclick = () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      updateViewer();
+    }
   };
 
-  loadPage(0);
-}
-
-// ================================
-// CARGAR PÁGINA
-// ================================
-async function loadPage(index) {
-  currentPage = index;
-  const page = currentPages[index];
-
-  viewer.open({
-    type: "image",
-    url: page.image,
-    width: page.width,
-    height: page.height
-  });
-
-  viewer.addOnceHandler("open", () => {
-    viewer.clearOverlays();
-    if (page.annotations) renderAnnotations(page.annotations);
-  });
-
-  document.getElementById("page-indicator").textContent =
-    `Página ${index + 1} / ${currentPages.length}`;
-}
-
-// ================================
-// RENDERIZAR ANOTACIONES
-// ================================
-function renderAnnotations(annotations) {
-  const container = document.getElementById("article-buttons");
-  container.innerHTML = "";
-  let counter = 1;
-
-  for(const ann of annotations) {
-    const overlay = document.createElement("div");
-    overlay.className = "article-segment";
-    overlay.dataset.art = "ART" + counter;
-    overlay.textContent = ann.text || "";
-
-    // Convertir puntos a rectángulo
-    const r = ann.points && ann.points.length > 0 ? {
-      x: Math.min(...ann.points.map(p => p[0])),
-      y: Math.min(...ann.points.map(p => p[1])),
-      w: Math.max(...ann.points.map(p => p[0])) - Math.min(...ann.points.map(p => p[0])),
-      h: Math.max(...ann.points.map(p => p[1])) - Math.min(...ann.points.map(p => p[1]))
-    } : {x:0,y:0,w:0,h:0};
-
-    const tiledImage = viewer.world.getItemAt(0);
-    const viewportRect = tiledImage.imageToViewportRectangle(new OpenSeadragon.Rect(r.x,r.y,r.w,r.h));
-    viewer.addOverlay({element: overlay, location: viewportRect});
-
-    overlay.addEventListener("mouseenter", () => overlay.classList.add("article-hover"));
-    overlay.addEventListener("mouseleave", () => overlay.classList.remove("article-hover"));
-    overlay.addEventListener("click", () => toggleArticleContent("ART"+counter));
-
-    // Botón en panel OCR
-    const wrapper = document.createElement("div");
-    const btn = document.createElement("button");
-    btn.textContent = "ART" + counter;
-    btn.onclick = () => toggleArticleContent("ART" + counter);
-
-    const content = document.createElement("div");
-    content.className = "article-content";
-    content.textContent = ann.text || "";
-    content.dataset.art = "ART" + counter;
-
-    wrapper.appendChild(btn);
-    wrapper.appendChild(content);
-    container.appendChild(wrapper);
-
-    counter++;
-  }
-}
-
-// ================================
-// TOGGLE OCR
-// ================================
-function toggleArticleContent(artId) {
-  document.querySelectorAll(".article-content").forEach(el => {
-    el.classList.toggle("open", el.dataset.art === artId && !el.classList.contains("open"));
-  });
-
-  document.querySelectorAll(".article-segment").forEach(el => {
-    el.classList.toggle("active", el.dataset.art === artId);
-  });
-}
-
-// ================================
-// NAVEGACIÓN ENTRE PDFS
-// ================================
-function prevPdf() {
-  if(currentPdfIndex > 0) {
-    currentPdfIndex--;
-    loadPdf(pdfIndex[currentPdfIndex]);
-  }
-}
-
-function nextPdf() {
-  if(currentPdfIndex < pdfIndex.length - 1) {
-    currentPdfIndex++;
-    loadPdf(pdfIndex[currentPdfIndex]);
-  }
-}
-
-// ================================
-// INICIO
-// ================================
-init();
+  updateViewer();
 </script>
-
-</body>
-</html>
