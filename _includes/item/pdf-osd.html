@@ -100,11 +100,10 @@
 <div id="article-buttons"></div>
 
 <script>
-const PDF_JSON = "{{ page.object_location || relative_url }}";  // tu archivo JSON
-
 let viewer;
 let pages = [];
 let currentPage = 0;
+const PDF_JSON = "objects/la-vanguardia/13-04-1944/La_Vanguardia_13-04-1944_osd.json";
 
 // ================================
 // INIT
@@ -114,7 +113,7 @@ async function init() {
   pages = data.pages;
 
   viewer = OpenSeadragon({
-    id: "osd",
+    id: "openseadragon1",
     prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
     showNavigator: true
   });
@@ -151,7 +150,6 @@ function loadPage(index) {
       `Página ${index + 1} / ${pages.length}`;
   });
 }
-
 
 // ================================
 // RENDER ANNOTATIONS
@@ -191,7 +189,7 @@ function renderArticles(viewer, annotations) {
     new OpenSeadragon.MouseTracker({
       element: overlay,
       clickHandler: () => {
-        zoomToArticle(viewer, { xywh: { x, y, w, h }, id: ann.id });
+        zoomToArticle(viewer, { xywh: { x, y, w, h }, id: artId });
         toggleArticleContent(artId);
       }
     });
@@ -201,7 +199,7 @@ function renderArticles(viewer, annotations) {
     const btn = document.createElement("button");
     btn.textContent = artId;
     btn.onclick = () => {
-      zoomToArticle(viewer, { xywh: { x, y, w, h }, id: ann.id });
+      zoomToArticle(viewer, { xywh: { x, y, w, h }, id: artId });
       toggleArticleContent(artId);
     };
 
