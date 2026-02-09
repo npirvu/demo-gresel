@@ -8,7 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
 
 <script>
-  const basePath = "{{ page.images_path | relative_url }}";
+  const basePath = "{{ page.object_location || relative_url }}";
   const baseName = "{{ page.base_name }}";
   const totalPages = "{{ page.num_pages }}";
 
