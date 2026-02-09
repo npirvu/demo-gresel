@@ -1,9 +1,14 @@
 <div id="openseadragon1" style="width: 800px; height: 600px;"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
-<script type="text/javascript">
-    var viewer = OpenSeadragon({
+
+<script src="https://openseadragon.github.io/openseadragon/openseadragon.min.js"></script>
+<script>
+  fetch('{{ page.object_location || relative_url }}')
+    .then(r => r.json())
+    .then(data => {
+      OpenSeadragon({
         id: "openseadragon1",
-        prefixUrl:"https://openseadragon.github.io/openseadragon/images/",
-        tileSources: "{{ page.object_location || relative_url }}"
+        prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
+        tileSources: data.tileSources  // <-- Usamos el array que generamos
+      });
     });
 </script>

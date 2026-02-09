@@ -79,17 +79,25 @@ def process_folder(folder_path):
             continue
         
         pages = []
+        osd_tiles = []  # <-- Aquí guardaremos los tileSources para OpenSeadragon
         for page_num, xml_file in sorted(xmls[base]):
             xml_path = os.path.join(folder_path, xml_file)
             image_path = f"images/{base}_page-{page_num}.jpg"
             
-            pages.append(
-                parse_page_xml(xml_path, image_path, page_num)
-            )
+            page_data = parse_page_xml(xml_path, image_path, page_num)
+            pages.append(page_data)
+            
+            # Añadimos el tileSource para OpenSeadragon
+            osd_tiles.append({
+                "type": "image",
+                "url": image_path,
+                "buildPyramid": False
+            })
         
         output = {
             "id": base,
-            "pages": pages
+            "pages": pages,
+            "tileSources": osd_tiles  # <-- Esto se usará en OSD
         }
         
         out_path = os.path.join(folder_path, f"{base}_osd.json")

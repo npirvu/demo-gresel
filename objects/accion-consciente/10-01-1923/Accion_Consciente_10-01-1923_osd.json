@@ -1,6 +1,5 @@
 {
   "id": "Accion_Consciente_10-01-1923",
-  "pdf": "Accion_Consciente_10-01-1923.pdf",
   "pages": [
     {
       "page": 1,
@@ -2218,6 +2217,28 @@
           "text": ""
         }
       ]
+    }
+  ],
+  "tileSources": [
+    {
+      "type": "image",
+      "url": "images/Accion_Consciente_10-01-1923_page-1.jpg",
+      "buildPyramid": false
+    },
+    {
+      "type": "image",
+      "url": "images/Accion_Consciente_10-01-1923_page-2.jpg",
+      "buildPyramid": false
+    },
+    {
+      "type": "image",
+      "url": "images/Accion_Consciente_10-01-1923_page-3.jpg",
+      "buildPyramid": false
+    },
+    {
+      "type": "image",
+      "url": "images/Accion_Consciente_10-01-1923_page-4.jpg",
+      "buildPyramid": false
     }
   ]
 }
