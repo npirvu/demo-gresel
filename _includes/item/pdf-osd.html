@@ -161,16 +161,11 @@ async function loadPage(index) {
   currentPage = index;
   const page = currentPages[index];
 
-  viewer.open({
-    type: "image",
-    url: page.image,
-    width: page.width,
-    height: page.height
-  });
+  viewer.open(page.image); // abre la imagen JPG en OpenSeadragon
 
   viewer.addOnceHandler("open", () => {
     viewer.clearOverlays();
-    if (page.annotations) renderAnnotations(page.annotations);
+    if(page.annotations) renderAnnotations(page.annotations);
   });
 
   document.getElementById("page-indicator").textContent =
