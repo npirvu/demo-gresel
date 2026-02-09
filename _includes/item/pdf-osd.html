@@ -137,16 +137,18 @@ function loadPage(index) {
   currentPage = index;
   const page = pages[index];
 
-  viewer.open(page.image);
+  // Si es un objeto TileSource, pasar directamente
+  viewer.open(page);
 
   viewer.addOnceHandler("open", () => {
     viewer.clearOverlays();
-    renderArticles(viewer, page.annotations);
+    if(page.annotations) renderArticles(viewer, page.annotations);
 
     document.getElementById("page-indicator").textContent =
       `Página ${index + 1} / ${pages.length}`;
   });
 }
+
 
 // ================================
 // RENDER ANNOTATIONS
