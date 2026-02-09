@@ -103,7 +103,7 @@
 let viewer;
 let pages = [];
 let currentPage = 0;
-const PDF_JSON = "/demo-gresel/objects/la-vanguardia/13-04-1944/La_Vanguardia_13-04-1944_osd.json";
+const PDF_JSON = "{{ page.object_location || relative_url }}";
 
 // ================================
 // INIT
@@ -248,6 +248,6 @@ function toggleArticleContent(artId) {
 // ================================
 init();
 </script>
-  <script src="viewer.js"></script>
+
 </body>
 </html>
