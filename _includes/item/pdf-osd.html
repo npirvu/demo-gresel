@@ -137,8 +137,11 @@ function loadPage(index) {
   currentPage = index;
   const page = pages[index];
 
-  // Si es un objeto TileSource, pasar directamente
-  viewer.open(page);
+  viewer.open(new OpenSeadragon.ImageTileSource({
+    type: 'image',
+    url: page.image,
+    buildPyramid: false
+  }));
 
   viewer.addOnceHandler("open", () => {
     viewer.clearOverlays();
