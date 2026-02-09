@@ -4,6 +4,6 @@
     var viewer = OpenSeadragon({
         id: "openseadragon1",
         prefixUrl:"https://openseadragon.github.io/openseadragon/images/",
-        tileSources: "/path/to/my/image.dzi"
+        tileSources: "{{ page.object_location || relative_url }}"
     });
 </script>
