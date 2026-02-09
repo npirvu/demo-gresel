@@ -153,24 +153,20 @@ async function init() {
 // ================================
 async function loadPage(index) {
   currentPage = index;
-  const canvas = canvases[index];
+  const page = pages[index];
 
-  const image = canvas.images[0].resource;
-  const service = Array.isArray(image.service) ? image.service[0] : image.service;
-  const infoJsonUrl = (service['@id'] || service.id) + "/info.json";
+  // Si es un objeto TileSource, pasar directamente
+  viewer.open(page);
 
-  viewer.open(infoJsonUrl);
-
-  viewer.addOnceHandler("open", async () => {
+  viewer.addOnceHandler("open", () => {
     viewer.clearOverlays();
-
-    const articles = await loadAnnotations(canvas);
-    renderArticles(viewer, articles);
+    if(page.annotations) renderArticles(viewer, page.annotations);
 
     document.getElementById("page-indicator").textContent =
-      `Página ${index + 1} / ${canvases.length}`;
+      `Página ${index + 1} / ${pages.length}`;
   });
 }
+
 
 // ================================
 // LOAD ANNOTATIONS
