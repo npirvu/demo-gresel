@@ -139,11 +139,7 @@ async function init() {
   viewer = OpenSeadragon({
     id: "osd",
     prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
-    showNavigator: true,
-    tileSources: manifest.tileSources.map(ts => ({
-      ...ts,
-      url: '{{ site.baseurl }}/objects' + ts.url
-    }))
+    showNavigator: true
   });
 
   document.getElementById("prev-page").onclick = () => {
@@ -151,12 +147,10 @@ async function init() {
   };
 
   document.getElementById("next-page").onclick = () => {
-    if (currentPage < pages.length -1) loadPage(currentPage + 1);
+    if (currentPage < pages.length - 1) loadPage(currentPage + 1);
   };
-  
-  viewer.addHandler('open', () => {
-    loadPage(0);
-  })
+
+  loadPage(0);
 }
 
 
@@ -164,15 +158,24 @@ async function init() {
 
 function loadPage(index) {
   currentPage = index;
-  viewer.goToPage(index);
-
-  viewer.clearOverlays();
-
   const pageData = pages[index];
-  renderAnnotations(viewer, pageData);
-
-  document.getElementById("page-indicator").textContent =
-    `Página ${index + 1} / ${pages.length}`;
+  
+  // Close current image and open new one
+  const tileSource = {
+    type: "image",
+    url: '{{ site.baseurl }}/objects' + pageData.image,
+    buildPyramid: true
+  };
+  
+  viewer.open(tileSource);
+  
+  viewer.addOnceHandler('open', () => {
+    viewer.clearOverlays();
+    renderAnnotations(viewer, pageData);
+    
+    document.getElementById("page-indicator").textContent =
+      `Página ${index + 1} / ${pages.length}`;
+  });
 }
 
 
