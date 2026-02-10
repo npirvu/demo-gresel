@@ -5,7 +5,7 @@
       "page": 1,
       "width": 1601,
       "height": 2477,
-      "image": "images/La_Vanguardia_13-04-1944_page-1.jpg",
+      "image": "La_Vanguardia/images/La_Vanguardia_13-04-1944_page-1.jpg",
       "annotations": [
         {
           "id": "r_1",
@@ -16026,7 +16026,7 @@
       "page": 2,
       "width": 1601,
       "height": 2477,
-      "image": "images/La_Vanguardia_13-04-1944_page-2.jpg",
+      "image": "La_Vanguardia/images/La_Vanguardia_13-04-1944_page-2.jpg",
       "annotations": [
         {
           "id": "region_1644244011897_1827",
@@ -53011,7 +53011,7 @@
       "page": 3,
       "width": 1601,
       "height": 2477,
-      "image": "images/La_Vanguardia_13-04-1944_page-3.jpg",
+      "image": "La_Vanguardia/images/La_Vanguardia_13-04-1944_page-3.jpg",
       "annotations": [
         {
           "id": "r_1_1",
@@ -70914,7 +70914,7 @@
       "page": 4,
       "width": 1601,
       "height": 2477,
-      "image": "images/La_Vanguardia_13-04-1944_page-4.jpg",
+      "image": "La_Vanguardia/images/La_Vanguardia_13-04-1944_page-4.jpg",
       "annotations": [
         {
           "id": "region_1644244278138_1869",
@@ -94270,23 +94270,23 @@
   "tileSources": [
     {
       "type": "image",
-      "url": "images/La_Vanguardia_13-04-1944_page-1.jpg",
-      "buildPyramid": false
+      "url": "La_Vanguardia/images/La_Vanguardia_13-04-1944_page-1.jpg",
+      "buildPyramid": true
     },
     {
       "type": "image",
-      "url": "images/La_Vanguardia_13-04-1944_page-2.jpg",
-      "buildPyramid": false
+      "url": "La_Vanguardia/images/La_Vanguardia_13-04-1944_page-2.jpg",
+      "buildPyramid": true
     },
     {
       "type": "image",
-      "url": "images/La_Vanguardia_13-04-1944_page-3.jpg",
-      "buildPyramid": false
+      "url": "La_Vanguardia/images/La_Vanguardia_13-04-1944_page-3.jpg",
+      "buildPyramid": true
     },
     {
       "type": "image",
-      "url": "images/La_Vanguardia_13-04-1944_page-4.jpg",
-      "buildPyramid": false
+      "url": "La_Vanguardia/images/La_Vanguardia_13-04-1944_page-4.jpg",
+      "buildPyramid": true
     }
   ]
 }
