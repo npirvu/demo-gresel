@@ -2,15 +2,16 @@
 
 <script src="https://openseadragon.github.io/openseadragon/openseadragon.min.js"></script>
 <script>
-  fetch('{{ page.object_location || relative_url }}')
+  fetch('{{ page.object_location | relative_url }}')
     .then(r => r.json())
     .then(data => {
       OpenSeadragon({
         id: "openseadragon1",
         prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
         tileSources: data.tileSources.map(ts => ({
-        ...ts,
-        url: '/demo-gresel/' + ts.url
-      }))
+          ...ts,
+          url: '/demo-gresel/' + ts.url
+        }))
+      });
     });
 </script>
