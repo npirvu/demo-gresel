@@ -1,17 +1,292 @@
-<div id="openseadragon1" style="width: 800px; height: 600px;"></div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Newspaper Viewer (OpenSeadragon)</title>
 
-<script src="https://openseadragon.github.io/openseadragon/openseadragon.min.js"></script>
+<link rel="stylesheet" href="https://viewer.library.wales/viewer-custom.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
+
+<style>
+  #osd {
+    width: 100%;
+    height: 800px;
+    border: 1px solid #88ea1230;
+    background: #171717
+  }
+
+  #osd-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+    padding: 0.25em;
+    background: #1f1f1f;
+    border: 1px solid #333;
+    border-radius: 6px;
+    margin-bottom: 0.4em;
+  }
+
+  #osd-controls button {
+    background: #2a2a2a;
+    color: #eee;
+    border: 1px solid #444;
+    padding: 0.15em 0.4em;
+    font-size: 0.8em;
+    line-height: 1;
+    border-radius: 4px;
+  }
+
+  #osd-controls button:hover {
+    background: #3a3a3a;
+  }
+
+  #page-indicator {
+    color: #bbb;
+    font-size: 0.75em;
+    margin-left: auto;
+  }
+
+  .text-region {
+    border: 2px solid rgba(96, 132, 5, 0.2);
+    background: rgba(127, 175, 7, 0.1);
+  }
+
+  .text-region:hover {
+    border: 2px solid rgba(96, 132, 5, 0.457);
+    background: rgba(127, 175, 7, 0.463);
+  }
+
+  .text-region.active {
+    border-color: rgba(31, 135, 0, 0.523);
+    background: rgba(27, 108, 2, 0.423);
+  }
+
+  #annotation-buttons button {
+    display: block;
+    width: 100%;
+    padding: 0.3em 0.6em;    
+    margin-bottom: 0.15em;
+    text-align: left;
+
+    background: rgba(234, 238, 225, 0.85);
+    border: 1px solid rgba(84, 114, 6, 0.35);
+    border-radius: 3px;
+
+    cursor: pointer;
+    font-weight: 500;       
+    font-size: 0.85em;      
+    line-height: 1.2;
+  }
+
+  #annotation-buttons button:hover {
+    background: rgba(210, 220, 190, 0.9);
+  }
+
+  .annotation-content {
+    white-space: pre-wrap;
+    max-height: 0px;          
+    overflow-y: auto;           
+    overflow-x: hidden;         
+    opacity: 0;
+    padding: 0 1em;
+    border-left: 3px solid rgba(131, 232, 0, 0.341);
+    text-align: left;
+    font-size: 0.85em;
+    line-height: 1.4;
+    transition:
+      max-height 0.35s ease,
+      opacity 0.25s ease,
+      padding 0.25s ease;
+  }
+
+  .annotation-content.open {
+    max-height: 500px;           
+    opacity: 1;
+    padding: 0.5em 1em;
+  }
+
+</style>
+</head>
+
+
+<body>
+
+<div id="osd-controls">
+  <button id="prev-page">Anterior</button>
+  <button id="next-page">Siguiente</button>
+  <span id="page-indicator">Página 1 / N</span>
+</div>
+
+<div id="osd"></div>
+
+<h3>Transcripciones OCR</h3>
+<div id="annotation-buttons"></div>
+
 <script>
-  fetch('{{ page.object_location | relative_url }}')
-    .then(r => r.json())
-    .then(data => {
-      OpenSeadragon({
-        id: "openseadragon1",
-        prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
-        tileSources: data.tileSources.map(ts => ({
-          ...ts,
-          url: ts.url
-        }))
-      });
+const MANIFEST_URL = "{{ page.object_location | relative_url }}";
+
+let viewer;
+let pages = []
+let currentPage = 0;
+
+
+// INIT
+
+async function init() {
+  const manifest = await (await fetch(MANIFEST_URL)).json();
+  pages = manifest.pages;
+
+  viewer = OpenSeadragon({
+    id: "osd",
+    prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
+    showNavigator: true,
+    tileSources: manifest.tileSources.map(ts => ({
+      ...ts,
+      url: ts.url
+    }))
+  });
+
+  document.getElementById("prev-page").onclick = () => {
+    if (currentPage > 0) loadPage(currentPage - 1);
+  };
+
+  document.getElementById("next-page").onclick = () => {
+    if (currentPage < pages.length -1) loadPage(currentPage + 1);
+  };
+  
+  viewer.addHandler('open', () => {
+    loadPage(0);
+  })
+}
+
+
+// LOAD PAGE
+
+function loadPage(index) {
+  currentPage = index;
+  viewer.goToPage(index);
+
+  viewer.clearOverlays();
+
+  const pageData = pages[index];
+  renderAnnotations(viewer, pageData);
+
+  document.getElementById("page-indicator").textContent =
+    `Página ${index + 1} / ${pages.length}`;
+}
+
+
+// RENDER ANNOTATIONS
+
+function renderAnnotations(viewer, pageData) {
+  const container = document.getElementById("annotation-buttons");
+  container.innerHTML = "";
+
+  const textRegions = pageData.annotations.filter(ann => ann.type === "TextRegion");
+
+  textRegions.forEach((region, idx) => {
+    const regionId = `REGION-${idx + 1}`;
+
+    // Get all TextLines that belong to this region
+    const textLines = pageData.annotations.filter(ann =>
+      ann.type === "TextLine" &&
+      ann.id.startsWith(region.id)
+    );
+
+    const fullText = textLines.map(line => line.text).join('\n');
+
+    // Create overlay on the viewer
+    const overlay = document.createElement("div");
+    overlay.className = "text-region";
+    overlay.dataset.region = regionId;
+
+    const points = region.points;
+    const rect = calculateBoundingBox(points, pageData.width, pageData.height);
+
+    viewer.addOverlay({
+      element: overlay,
+      location: new OpenSeadragon.Rect(rect.x, rect.y, rect.width, rect.height)
     });
+
+    overlay.addEventListener("mouseenter", () => overlay.classList.add("hover"));
+    overlay.addEventListener("mouseleave", () => overlay.classlist.remove("hover"));
+
+    new OpenSeadragon.MouseTracker({
+      element: overlay,
+      clickHandler: () => {
+        zoomToRegion(viewer, rect);
+        toggleAnnotationContent(regionId);
+      }
+    });
+
+    // Create button and content
+    const wrapper = document.createElement("div");
+
+    const btn = document.createElement("button");
+    btn.textContent = `Región ${idx + 1}`;
+    btn.onclick = () => {
+      zoomToRegion(viewer, rect);
+      toggleAnnotationContent(regionId);
+    };
+
+    const content = document.createElement("div");
+    content.className = "annotation-content";
+    content.textContent = fullText || "Sin texto";
+    content.dataset.region = regionId;
+
+    wrapper.appendChild(btn);
+    wrapper.appendChild(content);
+    container.appendChild(wrapper);
+  });
+}
+
+
+// CALCULATE BOUNDING BOX
+
+function calculateBoundingBox(points, imgWidth, imgHeight) {
+  const xs = points.map(p => p[0]);
+  const ys = points.map(p => p[1]);
+
+  const minX = Math.min(...xs) / imgWidth;
+  const minY = Math.min(...ys) / imgHeight;
+  const maxX = Math.max(...xs) / imgWidth;
+  const maxY = Math.max(...ys) / imgHeight;
+
+  return {
+    x: minX,
+    y: minY,
+    width: maxX - minX,
+    height: maxY - minY
+  };
+}
+
+
+// ZOOM
+
+function zoomToRegion(viewer, rect) {
+  const viewportRect = new OpenSeadragon.Rect(rect.x, rect.y, rect.width, rect.height);
+  viewer.viewport.fitBounds(viewportRect, true);
+
+  document.querySelectorAll(".text-region")
+  .forEach(el => el.classList.remove("active"));
+
+  // The overlay will be highlighted when we click its button
+}
+
+
+// TOGGLE OCR
+
+function toggleAnnotationContent(regionId) {
+  document.querySelectorAll(".annotation-content").forEach(el => {
+    el.classList.toggle("open", el.dataset.region === regionId && !el.classList.contains("open"));
+  });
+}
+
+
+// START
+
+init();
 </script>
+
+</body>
+</html>
