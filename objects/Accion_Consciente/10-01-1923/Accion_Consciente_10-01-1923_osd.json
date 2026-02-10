@@ -5,7 +5,7 @@
       "page": 1,
       "width": 2479,
       "height": 3508,
-      "image": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-1.jpg",
+      "image": "/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-1.jpg",
       "annotations": [
         {
           "id": "r_8",
@@ -289,7 +289,7 @@
       "page": 2,
       "width": 2479,
       "height": 3508,
-      "image": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-2.jpg",
+      "image": "/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-2.jpg",
       "annotations": [
         {
           "id": "r",
@@ -1010,7 +1010,7 @@
       "page": 3,
       "width": 2479,
       "height": 3508,
-      "image": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-3.jpg",
+      "image": "/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-3.jpg",
       "annotations": [
         {
           "id": "r_1",
@@ -1731,7 +1731,7 @@
       "page": 4,
       "width": 2479,
       "height": 3508,
-      "image": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-4.jpg",
+      "image": "/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-4.jpg",
       "annotations": [
         {
           "id": "r",
@@ -2222,22 +2222,22 @@
   "tileSources": [
     {
       "type": "image",
-      "url": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-1.jpg",
+      "url": "/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-1.jpg",
       "buildPyramid": true
     },
     {
       "type": "image",
-      "url": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-2.jpg",
+      "url": "/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-2.jpg",
       "buildPyramid": true
     },
     {
       "type": "image",
-      "url": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-3.jpg",
+      "url": "/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-3.jpg",
       "buildPyramid": true
     },
     {
       "type": "image",
-      "url": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-4.jpg",
+      "url": "/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-4.jpg",
       "buildPyramid": true
     }
   ]
