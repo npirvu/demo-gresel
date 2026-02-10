@@ -209,7 +209,7 @@ function renderAnnotations(viewer, pageData) {
     });
 
     overlay.addEventListener("mouseenter", () => overlay.classList.add("hover"));
-    overlay.addEventListener("mouseleave", () => overlay.classlist.remove("hover"));
+    overlay.addEventListener("mouseleave", () => overlay.classList.remove("hover"));
 
     new OpenSeadragon.MouseTracker({
       element: overlay,
