@@ -8,7 +8,9 @@
       OpenSeadragon({
         id: "openseadragon1",
         prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
-        tileSources: data.tileSources  // <-- Usamos el array que generamos
-      });
+        tileSources: data.tileSources.map(ts => ({
+        ...ts,
+        url: '/demo-gresel/' + ts.url
+      }));
     });
 </script>

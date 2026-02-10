@@ -5,8 +5,8 @@ import re
 
 NS = {"pc": "http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15"}
 
-PDF_RE = re.compile(r"(.*)/.pdf$", re.IGNORECASE)
-XML_RE = re.compile(r"(.+)_P(/d+)/.xml$", re.IGNORECASE)
+PDF_RE = re.compile(r"(.*)\.pdf$", re.IGNORECASE)
+XML_RE = re.compile(r"(.+)_P(\d+)\.xml$", re.IGNORECASE)
 
 def parse_points(points):
     return [[int(x), int(y)] for x, y in 
@@ -79,14 +79,14 @@ def process_folder(folder_path):
             continue
         
         # Extract folder name from base (e.g., "La_Vanguardia" from "La_Vanguardia_13-04-1944")
-        folder_name = re.match(r"^(.+?)_/d", base).group(1)
+        folder_name = re.match(r"^(.+?)_\d", base).group(1)
         
         pages = []
         osd_tiles = []
         
         for page_num, xml_file in sorted(xmls[base]):
             xml_path = os.path.join(folder_path, xml_file)
-            image_path = f"/{folder_name}/images/{base}_page-{page_num}.jpg"
+            image_path = f"/demo-gresel/objects/{folder_name}/images/{base}_page-{page_num}.jpg"
             
             page_data = parse_page_xml(xml_path, image_path, page_num)
             pages.append(page_data)
@@ -110,7 +110,7 @@ def process_folder(folder_path):
         print(f"Generated: {out_path}")
         
 
-ROOT = r"C:/Users/Nuria/Documents/GRESEL/repositorio/demo-gresel/objects"
+ROOT = r"C:\Users\Nuria\Documents\GRESEL\repositorio\demo-gresel\objects"
 
 for root, dirs, files in os.walk(ROOT):
     process_folder(root)
