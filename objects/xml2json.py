@@ -86,7 +86,7 @@ def process_folder(folder_path):
         
         for page_num, xml_file in sorted(xmls[base]):
             xml_path = os.path.join(folder_path, xml_file)
-            image_path = f"/demo-gresel/objects/{folder_name}/images/{base}_page-{page_num}.jpg"
+            image_path = f"objects/{folder_name}/images/{base}_page-{page_num}.jpg"
             
             page_data = parse_page_xml(xml_path, image_path, page_num)
             pages.append(page_data)
