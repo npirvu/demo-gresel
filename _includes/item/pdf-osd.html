@@ -186,29 +186,41 @@ function renderAnnotations(viewer, pageData) {
   container.innerHTML = "";
 
   const textRegions = pageData.annotations.filter(ann => ann.type === "TextRegion");
-
+  
+  // Wait for the image to be fully loaded
+  const tiledImage = viewer.world.getItemAt(0);
+  if (!tiledImage) {
+    console.error('No tiled image loaded');
+    return;
+  }
+  
   textRegions.forEach((region, idx) => {
     const regionId = `REGION-${idx + 1}`;
-
+    
     // Get all TextLines that belong to this region
-    const textLines = pageData.annotations.filter(ann =>
-      ann.type === "TextLine" &&
+    const textLines = pageData.annotations.filter(ann => 
+      ann.type === "TextLine" && 
       ann.id.startsWith(region.id)
     );
-
+    
     const fullText = textLines.map(line => line.text).join('\n');
-
+    
     // Create overlay on the viewer
     const overlay = document.createElement("div");
     overlay.className = "text-region";
     overlay.dataset.region = regionId;
-
+    
     const points = region.points;
     const rect = calculateBoundingBox(points, pageData.width, pageData.height);
-
+    
+    // Convert to viewport coordinates
+    const viewportRect = tiledImage.imageToViewportRectangle(
+      rect.x, rect.y, rect.width, rect.height
+    );
+    
     viewer.addOverlay({
       element: overlay,
-      location: new OpenSeadragon.Rect(rect.x, rect.y, rect.width, rect.height)
+      location: viewportRect
     });
 
     overlay.addEventListener("mouseenter", () => overlay.classList.add("hover"));
@@ -217,8 +229,12 @@ function renderAnnotations(viewer, pageData) {
     new OpenSeadragon.MouseTracker({
       element: overlay,
       clickHandler: () => {
-        zoomToRegion(viewer, rect);
+        zoomToRegion(viewer, viewportRect);
         toggleAnnotationContent(regionId);
+        
+        // Highlight active overlay
+        document.querySelectorAll(".text-region").forEach(el => el.classList.remove("active"));
+        overlay.classList.add("active");
       }
     });
 
@@ -228,8 +244,12 @@ function renderAnnotations(viewer, pageData) {
     const btn = document.createElement("button");
     btn.textContent = `Región ${idx + 1}`;
     btn.onclick = () => {
-      zoomToRegion(viewer, rect);
+      zoomToRegion(viewer, viewportRect);
       toggleAnnotationContent(regionId);
+      
+      // Highlight active overlay
+      document.querySelectorAll(".text-region").forEach(el => el.classList.remove("active"));
+      overlay.classList.add("active");
     };
 
     const content = document.createElement("div");
@@ -249,12 +269,12 @@ function renderAnnotations(viewer, pageData) {
 function calculateBoundingBox(points, imgWidth, imgHeight) {
   const xs = points.map(p => p[0]);
   const ys = points.map(p => p[1]);
-
-  const minX = Math.min(...xs) / imgWidth;
-  const minY = Math.min(...ys) / imgHeight;
-  const maxX = Math.max(...xs) / imgWidth;
-  const maxY = Math.max(...ys) / imgHeight;
-
+  
+  const minX = Math.min(...xs);
+  const minY = Math.min(...ys);
+  const maxX = Math.max(...xs);
+  const maxY = Math.max(...ys);
+  
   return {
     x: minX,
     y: minY,
@@ -266,8 +286,7 @@ function calculateBoundingBox(points, imgWidth, imgHeight) {
 
 // ZOOM
 
-function zoomToRegion(viewer, rect) {
-  const viewportRect = new OpenSeadragon.Rect(rect.x, rect.y, rect.width, rect.height);
+function zoomToRegion(viewer, viewportRect) {
   viewer.viewport.fitBounds(viewportRect, true);
 
   document.querySelectorAll(".text-region")
