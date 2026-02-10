@@ -142,7 +142,7 @@ async function init() {
     showNavigator: true,
     tileSources: manifest.tileSources.map(ts => ({
       ...ts,
-      url: ts.url
+      url: '{{ site.baseurl }}/' + ts.url
     }))
   });
 
