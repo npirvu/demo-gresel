@@ -150,6 +150,7 @@
 <div id="osd"></div>
 
 <h3>Regiones de Texto</h3>
+
 <div id="region-list"></div>
 
 <script>
@@ -292,9 +293,7 @@ function renderRegions(viewer, pageData) {
     const btn = document.createElement("button");
     btn.className = "region-button";
     btn.textContent = `Región ${idx + 1}`;
-    if (region.text) {
-      btn.textContent += ` - ${region.text.substring(0, 30)}${region.text.length > 30 ? '...' : ''}`;
-    }
+
     btn.onclick = () => {
       zoomToRegion(viewer, viewportRect);
       toggleRegionContent(regionId);
