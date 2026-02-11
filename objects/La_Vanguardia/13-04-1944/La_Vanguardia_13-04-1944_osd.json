@@ -5,7 +5,7 @@
       "page": 1,
       "width": 801,
       "height": 1239,
-      "image": "objects/La-Vanguardia/images/La_Vanguardia_13-04-1944_page-1.jpg",
+      "image": "objects/<re.Match object; span=(0, 15), match='La_Vanguardia_1'>/images/La_Vanguardia_13-04-1944_page-1.jpg",
       "textRegions": [
         {
           "id": "r_1",
@@ -16156,7 +16156,7 @@
       "page": 2,
       "width": 801,
       "height": 1239,
-      "image": "objects/La-Vanguardia/images/La_Vanguardia_13-04-1944_page-2.jpg",
+      "image": "objects/<re.Match object; span=(0, 15), match='La_Vanguardia_1'>/images/La_Vanguardia_13-04-1944_page-2.jpg",
       "textRegions": [
         {
           "id": "region_1644244011897_1827",
@@ -53161,7 +53161,7 @@
       "page": 3,
       "width": 801,
       "height": 1239,
-      "image": "objects/La-Vanguardia/images/La_Vanguardia_13-04-1944_page-3.jpg",
+      "image": "objects/<re.Match object; span=(0, 15), match='La_Vanguardia_1'>/images/La_Vanguardia_13-04-1944_page-3.jpg",
       "textRegions": [
         {
           "id": "r_1_1",
@@ -71128,7 +71128,7 @@
       "page": 4,
       "width": 801,
       "height": 1239,
-      "image": "objects/La-Vanguardia/images/La_Vanguardia_13-04-1944_page-4.jpg",
+      "image": "objects/<re.Match object; span=(0, 15), match='La_Vanguardia_1'>/images/La_Vanguardia_13-04-1944_page-4.jpg",
       "textRegions": [
         {
           "id": "region_1644244278138_1869",
@@ -94502,22 +94502,22 @@
   "tileSources": [
     {
       "type": "image",
-      "url": "objects/La-Vanguardia/images/La_Vanguardia_13-04-1944_page-1.jpg",
+      "url": "objects/<re.Match object; span=(0, 15), match='La_Vanguardia_1'>/images/La_Vanguardia_13-04-1944_page-1.jpg",
       "buildPyramid": true
     },
     {
       "type": "image",
-      "url": "objects/La-Vanguardia/images/La_Vanguardia_13-04-1944_page-2.jpg",
+      "url": "objects/<re.Match object; span=(0, 15), match='La_Vanguardia_1'>/images/La_Vanguardia_13-04-1944_page-2.jpg",
       "buildPyramid": true
     },
     {
       "type": "image",
-      "url": "objects/La-Vanguardia/images/La_Vanguardia_13-04-1944_page-3.jpg",
+      "url": "objects/<re.Match object; span=(0, 15), match='La_Vanguardia_1'>/images/La_Vanguardia_13-04-1944_page-3.jpg",
       "buildPyramid": true
     },
     {
       "type": "image",
-      "url": "objects/La-Vanguardia/images/La_Vanguardia_13-04-1944_page-4.jpg",
+      "url": "objects/<re.Match object; span=(0, 15), match='La_Vanguardia_1'>/images/La_Vanguardia_13-04-1944_page-4.jpg",
       "buildPyramid": true
     }
   ]

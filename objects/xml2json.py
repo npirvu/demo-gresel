@@ -123,12 +123,10 @@ def process_folder(folder_path):
             continue
         
         # Extract folder name (e.g., "La_Vanguardia" from "La_Vanguardia_13-04-1944")
-        folder_name_raw = re.match(r"^(.+?)_\d", base)
-        if not folder_name_raw:
+        folder_name = re.match(r"^(.+?)_\d", base)
+        if not folder_name:
             print(f"Warning: Could not extract folder name from {base}")
             continue
-        
-        folder_name = folder_name_raw.group(1).replace("_", "-")
         
         pages = []
         osd_tiles = []
