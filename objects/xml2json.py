@@ -103,7 +103,7 @@ def process_folder(folder_path):
         for page_num, xml_file in sorted(xmls[base]):
             xml_path = os.path.join(folder_path, xml_file)
             image_filename = f"{base}_page-{page_num}.jpg"
-            image_path = f"objects/{folder_name}/images/{image_filename}"
+            image_path = f"/{folder_name}/images/{image_filename}"
             
             # Images are in parent folder's images directory, not in the date folder
             images_folder = os.path.join(os.path.dirname(folder_path), "images")
