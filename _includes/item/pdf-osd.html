@@ -158,9 +158,9 @@ let viewer;
 let pages = [];
 let currentPage = 0;
 
-
+// ================================
 // INIT
-
+// ================================
 async function init() {
   try {
     const response = await fetch(MANIFEST_URL);
@@ -200,9 +200,9 @@ async function init() {
   }
 }
 
-
+// ================================
 // LOAD PAGE
-
+// ================================
 function loadPage(index) {
   currentPage = index;
   const pageData = pages[index];
@@ -227,9 +227,9 @@ function loadPage(index) {
   });
 }
 
-
+// ================================
 // RENDER REGIONS
-
+// ================================
 function renderRegions(viewer, pageData) {
   const container = document.getElementById("region-list");
   container.innerHTML = "";
@@ -330,9 +330,9 @@ function renderRegions(viewer, pageData) {
   });
 }
 
-
+// ================================
 // CALCULATE BOUNDING BOX
-
+// ================================
 function calculateBoundingBox(points) {
   const xs = points.map(p => p[0]);
   const ys = points.map(p => p[1]);
@@ -350,16 +350,16 @@ function calculateBoundingBox(points) {
   };
 }
 
-
+// ================================
 // ZOOM TO REGION
-
+// ================================
 function zoomToRegion(viewer, viewportRect) {
   viewer.viewport.fitBounds(viewportRect, true);
 }
 
-
+// ================================
 // TOGGLE REGION CONTENT
-
+// ================================
 function toggleRegionContent(regionId) {
   document.querySelectorAll(".region-content").forEach(el => {
     if (el.dataset.region === regionId) {
@@ -370,9 +370,9 @@ function toggleRegionContent(regionId) {
   });
 }
 
-
+// ================================
 // HIGHLIGHT OVERLAY
-
+// ================================
 function highlightOverlay(regionId) {
   document.querySelectorAll(".text-region").forEach(el => {
     if (el.dataset.region === regionId) {
@@ -383,9 +383,9 @@ function highlightOverlay(regionId) {
   });
 }
 
-
+// ================================
 // UPDATE PAGE INDICATOR
-
+// ================================
 function updatePageIndicator() {
   const prevBtn = document.getElementById("prev-page");
   const nextBtn = document.getElementById("next-page");
@@ -397,9 +397,9 @@ function updatePageIndicator() {
   indicator.textContent = `Página ${currentPage + 1} / ${pages.length}`;
 }
 
-
+// ================================
 // START
-
+// ================================
 init();
 </script>
 
