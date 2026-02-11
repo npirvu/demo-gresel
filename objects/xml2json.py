@@ -123,7 +123,7 @@ def process_folder(folder_path):
             continue
         
         # Extract folder name (e.g., "La_Vanguardia" from "La_Vanguardia_13-04-1944")
-        folder_name = re.match(r"^(.+?)_\d", base)
+        folder_name = re.match(r"^(.+?)_\d", base).group(1)
         if not folder_name:
             print(f"Warning: Could not extract folder name from {base}")
             continue

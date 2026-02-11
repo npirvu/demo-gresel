@@ -5,7 +5,7 @@
       "page": 1,
       "width": 1240,
       "height": 1754,
-      "image": "objects/<re.Match object; span=(0, 19), match='Accion_Consciente_1'>/images/Accion_Consciente_10-01-1923_page-1.jpg",
+      "image": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-1.jpg",
       "textRegions": [
         {
           "id": "r_8",
@@ -301,7 +301,7 @@
       "page": 2,
       "width": 1240,
       "height": 1754,
-      "image": "objects/<re.Match object; span=(0, 19), match='Accion_Consciente_1'>/images/Accion_Consciente_10-01-1923_page-2.jpg",
+      "image": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-2.jpg",
       "textRegions": [
         {
           "id": "r",
@@ -1053,7 +1053,7 @@
       "page": 3,
       "width": 1240,
       "height": 1754,
-      "image": "objects/<re.Match object; span=(0, 19), match='Accion_Consciente_1'>/images/Accion_Consciente_10-01-1923_page-3.jpg",
+      "image": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-3.jpg",
       "textRegions": [
         {
           "id": "r_1",
@@ -1805,7 +1805,7 @@
       "page": 4,
       "width": 1240,
       "height": 1754,
-      "image": "objects/<re.Match object; span=(0, 19), match='Accion_Consciente_1'>/images/Accion_Consciente_10-01-1923_page-4.jpg",
+      "image": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-4.jpg",
       "textRegions": [
         {
           "id": "r",
@@ -2317,22 +2317,22 @@
   "tileSources": [
     {
       "type": "image",
-      "url": "objects/<re.Match object; span=(0, 19), match='Accion_Consciente_1'>/images/Accion_Consciente_10-01-1923_page-1.jpg",
+      "url": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-1.jpg",
       "buildPyramid": true
     },
     {
       "type": "image",
-      "url": "objects/<re.Match object; span=(0, 19), match='Accion_Consciente_1'>/images/Accion_Consciente_10-01-1923_page-2.jpg",
+      "url": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-2.jpg",
       "buildPyramid": true
     },
     {
       "type": "image",
-      "url": "objects/<re.Match object; span=(0, 19), match='Accion_Consciente_1'>/images/Accion_Consciente_10-01-1923_page-3.jpg",
+      "url": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-3.jpg",
       "buildPyramid": true
     },
     {
       "type": "image",
-      "url": "objects/<re.Match object; span=(0, 19), match='Accion_Consciente_1'>/images/Accion_Consciente_10-01-1923_page-4.jpg",
+      "url": "objects/Accion_Consciente/images/Accion_Consciente_10-01-1923_page-4.jpg",
       "buildPyramid": true
     }
   ]
