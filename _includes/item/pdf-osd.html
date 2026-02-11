@@ -307,6 +307,7 @@ function renderRegions(viewer, pageData) {
     // Display region text if available
     if (region.text) {
       const regionText = document.createElement("div");
+      regionText.className = "region-text";
       regionText.textContent = region.text;
       content.appendChild(regionText);
     }
