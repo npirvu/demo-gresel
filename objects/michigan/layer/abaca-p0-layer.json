@@ -1,7 +1,0 @@
-{
-  "@context": "http://iiif.io/api/presentation/2/context.json",
-  "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/layer/abaca-p0-layer.json",
-  "@type": "sc:Layer",
-  "label": "OCR Article Text",
-  "otherContent": []
-}
