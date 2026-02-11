@@ -94,8 +94,7 @@ def process_folder(folder_path):
         if base not in xmls:
             continue
         
-        folder_name_raw = re.match(r"^(.+?)_\d", base).group(1)
-        folder_name = folder_name_raw.replace("_", "-")
+        folder_name = re.match(r"^(.+?)_\d", base).group(1)
         
         pages = []
         osd_tiles = []
