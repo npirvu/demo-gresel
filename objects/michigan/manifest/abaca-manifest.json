@@ -1,0 +1,661 @@
+{
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001",
+  "@type": "sc:Manifest",
+  "label": "Abaca (Manila hemp) in the Philippines: by M.M. Saleeby",
+  "metadata": [
+    {
+      "label": "Title",
+      "value": "Abaca (Manila hemp) in the Philippines: by M.M. Saleeby",
+      "field": "title"
+    },
+    {
+      "label": "Author",
+      "value": "Saleeby, M. M",
+      "field": "author"
+    },
+    {
+      "label": "Abstract",
+      "value": "The United States and its Territories, drawn from the University of Michigan Library's Southeast Asia collection, comprises the full text of monographs and government documents published in the United States, Spain, and the Philippines between 1870 and 1925. The primary focus of the material is the Spanish-American war and subsequent American governance (approximately 1898-1910). This project was funded in part by a grant from the National Endowment for the Humanities.",
+      "field": "colldescr"
+    }
+  ],
+  "thumbnail": {
+    "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000001/full/!100,100/0/default.jpg",
+    "service": {
+      "@context": "http://iiif.io/api/image/2/context.json",
+      "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000001",
+      "profile": "http://iiif.io/api/image/2/level1.json"
+    },
+    "@type": "dctypes:Image"
+  },
+  "attribution": "University of Michigan Library Digital Collections",
+  "sequences": [
+    {
+      "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001/sequence/normal",
+      "@type": "sc:Sequence",
+      "label": "Page Set Order",
+      "canvases": [
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0",
+          "@type": "sc:Canvas",
+          "height": 4622,
+          "width": 2690,
+          "label": "Page #1 - Title Page",
+          "metadata": [
+            {
+              "label": "Feature",
+              "value": "Title Page",
+              "field": "ftr"
+            }
+          ],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000001/imageanno/0",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000001/canvas/0",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000001/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4622,
+                "width": 2690,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000001",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ],
+          "otherContent": [
+            {
+              "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p0-anno.json",
+              "@type": "sc:AnnotationList",
+              "label": "Transcription",
+              "within":
+              {
+                "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/layer/abaca-p0-layer.json",
+                "@type": "sc:Layer",
+                "label": "OCR Article Text"
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000002/canvas/1",
+          "@type": "sc:Canvas",
+          "height": 4471,
+          "width": 2533,
+          "label": "Page #2",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000002/imageanno/1",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000002/canvas/1",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000002/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4471,
+                "width": 2533,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000002",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000003/canvas/2",
+          "@type": "sc:Canvas",
+          "height": 4519,
+          "width": 2723,
+          "label": "Page 1",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000003/imageanno/2",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000003/canvas/2",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000003/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4519,
+                "width": 2723,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000003",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ],
+          "otherContent": [
+            {
+              "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p1-anno.json",
+              "@type": "sc:AnnotationList",
+              "label": "Transcription",
+              "within":
+              {
+                "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/layer/abaca-p1-layer.json",
+                "@type": "sc:Layer",
+                "label": "OCR Article Text"
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000004/canvas/3",
+          "@type": "sc:Canvas",
+          "height": 4548,
+          "width": 2635,
+          "label": "Page 2",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000004/imageanno/3",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000004/canvas/3",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000004/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4548,
+                "width": 2635,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000004",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ],
+          "otherContent": [
+            {
+              "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p2-anno.json",
+              "@type": "sc:AnnotationList",
+              "label": "Transcription",
+              "within":
+              {
+                "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/layer/abaca-p2-layer.json",
+                "@type": "sc:Layer",
+                "label": "OCR Article Text"
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000005/canvas/4",
+          "@type": "sc:Canvas",
+          "height": 4532,
+          "width": 2721,
+          "label": "Page 3",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000005/imageanno/4",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000005/canvas/4",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000005/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4532,
+                "width": 2721,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000005",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ],
+          "otherContent": [
+            {
+              "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/annotation/abaca-p3-anno.json",
+              "@type": "sc:AnnotationList",
+              "label": "Transcription",
+              "within":
+              {
+                "@id": "https://npirvu.github.io/demo-gresel/objects/michigan/layer/abaca-p3-layer.json",
+                "@type": "sc:Layer",
+                "label": "OCR Article Text"
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000006/canvas/5",
+          "@type": "sc:Canvas",
+          "height": 4567,
+          "width": 2855,
+          "label": "Page 4",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000006/imageanno/5",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000006/canvas/5",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000006/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4567,
+                "width": 2855,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000006",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000007/canvas/6",
+          "@type": "sc:Canvas",
+          "height": 4540,
+          "width": 2754,
+          "label": "Page 5",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000007/imageanno/6",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000007/canvas/6",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000007/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4540,
+                "width": 2754,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000007",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000008/canvas/7",
+          "@type": "sc:Canvas",
+          "height": 4565,
+          "width": 2746,
+          "label": "Page 6",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000008/imageanno/7",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000008/canvas/7",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000008/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4565,
+                "width": 2746,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000008",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000009/canvas/8",
+          "@type": "sc:Canvas",
+          "height": 4554,
+          "width": 2797,
+          "label": "Page 7",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000009/imageanno/8",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000009/canvas/8",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000009/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4554,
+                "width": 2797,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000009",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000010/canvas/9",
+          "@type": "sc:Canvas",
+          "height": 4441,
+          "width": 2605,
+          "label": "Page 8",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000010/imageanno/9",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000010/canvas/9",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000010/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4441,
+                "width": 2605,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000010",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000011/canvas/10",
+          "@type": "sc:Canvas",
+          "height": 4431,
+          "width": 2645,
+          "label": "Page 9",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000011/imageanno/10",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000011/canvas/10",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000011/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4431,
+                "width": 2645,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000011",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000012/canvas/11",
+          "@type": "sc:Canvas",
+          "height": 4533,
+          "width": 2694,
+          "label": "Page 10",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000012/imageanno/11",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000012/canvas/11",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000012/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4533,
+                "width": 2694,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000012",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000013/canvas/12",
+          "@type": "sc:Canvas",
+          "height": 4521,
+          "width": 2733,
+          "label": "Page 11",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000013/imageanno/12",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000013/canvas/12",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000013/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4521,
+                "width": 2733,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000013",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000014/canvas/13",
+          "@type": "sc:Canvas",
+          "height": 4509,
+          "width": 2772,
+          "label": "Page 12",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000014/imageanno/13",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000014/canvas/13",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000014/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4509,
+                "width": 2772,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000014",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000015/canvas/14",
+          "@type": "sc:Canvas",
+          "height": 4547,
+          "width": 2669,
+          "label": "Page 13",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000015/imageanno/14",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000015/canvas/14",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000015/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4547,
+                "width": 2669,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000015",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000016/canvas/15",
+          "@type": "sc:Canvas",
+          "height": 4471,
+          "width": 2653,
+          "label": "Page 14",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000016/imageanno/15",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000016/canvas/15",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000016/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4471,
+                "width": 2653,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000016",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000017/canvas/16",
+          "@type": "sc:Canvas",
+          "height": 4493,
+          "width": 2707,
+          "label": "Page 15",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000017/imageanno/16",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000017/canvas/16",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000017/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4493,
+                "width": 2707,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000017",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000018/canvas/17",
+          "@type": "sc:Canvas",
+          "height": 4521,
+          "width": 2743,
+          "label": "Page 16",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000018/imageanno/17",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000018/canvas/17",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000018/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4521,
+                "width": 2743,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000018",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000019/canvas/18",
+          "@type": "sc:Canvas",
+          "height": 4461,
+          "width": 2423,
+          "label": "Page 17",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000019/imageanno/18",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000019/canvas/18",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000019/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4461,
+                "width": 2423,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000019",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000020/canvas/19",
+          "@type": "sc:Canvas",
+          "height": 4551,
+          "width": 2763,
+          "label": "Page 18",
+          "metadata": [],
+          "images": [
+            {
+              "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000020/imageanno/19",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://quod.lib.umich.edu/cgi/t/text/api/manifest/philamer:bbn0285.0001.001:00000020/canvas/19",
+              "resource": {
+                "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000020/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "height": 4551,
+                "width": 2763,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://quod.lib.umich.edu/cgi/t/text/api/tile/philamer:bbn0285.0001.001:00000020",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "generatedDate": "2026-01-19T17:35:08-05:00"
+}
