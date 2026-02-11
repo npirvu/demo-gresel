@@ -304,15 +304,7 @@ function renderRegions(viewer, pageData) {
     content.className = "region-content";
     content.dataset.region = regionId;
 
-    // Display region text if available
-    if (region.text) {
-      const regionText = document.createElement("div");
-      regionText.className = "region-text";
-      regionText.textContent = region.text;
-      content.appendChild(regionText);
-    }
-
-    // Display text lines
+    // Display text lines only
     if (region.textLines && region.textLines.length > 0) {
       region.textLines.forEach((line, lineIdx) => {
         const lineDiv = document.createElement("div");
@@ -320,7 +312,8 @@ function renderRegions(viewer, pageData) {
         lineDiv.textContent = line.text || "(sin texto)";
         content.appendChild(lineDiv);
       });
-    } else if (!region.text) {
+    } else {
+      // If no text lines, show "(sin texto)"
       content.innerHTML = '<p style="color: #999;">(sin texto)</p>';
     }
 
