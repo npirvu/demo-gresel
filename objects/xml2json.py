@@ -2,6 +2,7 @@ import os
 import json
 import xml.etree.ElementTree as ET
 import re
+from PIL import Image
 
 NS = {"pc": "http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15"}
 
@@ -12,16 +13,23 @@ def parse_points(points):
     return [[int(x), int(y)] for x, y in 
             (p.split(",") for p in points.split())]
 
-def parse_page_xml(xml_path, image_path, page_number):
+def parse_page_xml(xml_path, image_path, page_number, actual_img_width=None, actual_img_height=None):
     tree = ET.parse(xml_path)
     root = tree.getroot()
     
     page_el = root.find(".//pc:Page", NS)
     
+    xml_width = int(page_el.attrib["imageWidth"])
+    xml_height = int(page_el.attrib["imageHeight"])
+    
+    # Calculate scale factors if actual dimensions provided
+    scale_x = actual_img_width / xml_width if actual_img_width else 1.0
+    scale_y = actual_img_height / xml_height if actual_img_height else 1.0
+    
     page = {
         "page": page_number,
-        "width": int(page_el.attrib["imageWidth"]),
-        "height": int(page_el.attrib["imageHeight"]),
+        "width": actual_img_width or xml_width,
+        "height": actual_img_height or xml_height,
         "image": image_path,
         "annotations": []
     }
@@ -31,10 +39,14 @@ def parse_page_xml(xml_path, image_path, page_number):
         if coords is None:
             continue
         
+        # Scale the points
+        points = parse_points(coords.attrib["points"])
+        scaled_points = [[int(x * scale_x), int(y * scale_y)] for x, y in points]
+        
         page["annotations"].append({
             "id": region.attrib.get("id"),
             "type": "TextRegion",
-            "points": parse_points(coords.attrib["points"]),
+            "points": scaled_points,
             "text": ""
         })
         
@@ -46,10 +58,14 @@ def parse_page_xml(xml_path, image_path, page_number):
             text_el = line.find(".//pc:TextEquiv/pc:Unicode", NS)
             text = text_el.text if text_el is not None else ""
             
+            # Scale the points
+            points = parse_points(coords.attrib["points"])
+            scaled_points = [[int(x * scale_x), int(y * scale_y)] for x, y in points]
+            
             page["annotations"].append({
                 "id": line.attrib.get("id"),
                 "type": "TextLine",
-                "points": parse_points(coords.attrib["points"]),
+                "points": scaled_points,
                 "text": text
             })
             
@@ -78,17 +94,30 @@ def process_folder(folder_path):
         if base not in xmls:
             continue
         
-        # Extract folder name from base (e.g., "La_Vanguardia" from "La_Vanguardia_13-04-1944")
-        folder_name = re.match(r"^(.+?)_\d", base).group(1)
+        folder_name_raw = re.match(r"^(.+?)_\d", base).group(1)
+        folder_name = folder_name_raw.replace("_", "-")
         
         pages = []
         osd_tiles = []
         
         for page_num, xml_file in sorted(xmls[base]):
             xml_path = os.path.join(folder_path, xml_file)
-            image_path = f"/{folder_name}/images/{base}_page-{page_num}.jpg"
+            image_filename = f"{base}_page-{page_num}.jpg"
+            image_path = f"objects/{folder_name}/images/{image_filename}"
             
-            page_data = parse_page_xml(xml_path, image_path, page_num)
+            # Images are in parent folder's images directory, not in the date folder
+            images_folder = os.path.join(os.path.dirname(folder_path), "images")
+            full_image_path = os.path.join(images_folder, image_filename)
+            
+            try:
+                img = Image.open(full_image_path)
+                actual_width, actual_height = img.width, img.height
+                print(f"Loaded {image_filename}: {actual_width}x{actual_height}")
+            except Exception as e:
+                print(f"Warning: Could not open {full_image_path}, using XML dimensions - {e}")
+                actual_width, actual_height = None, None
+            
+            page_data = parse_page_xml(xml_path, image_path, page_num, actual_width, actual_height)
             pages.append(page_data)
             
             osd_tiles.append({
