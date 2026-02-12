@@ -15,12 +15,12 @@ custom-foot: js/lunr-js.html
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>These advanced options can be added to your query in the search box to refine your results:</p> 
+                <p>Estas opciones avanzadas se pueden agregar a tu consulta en el cuadro de búsqueda para refinar tus resultados:</p> 
                 <ul>
-                    <li>Search a specific field: use the field name, colon, then your query, e.g. <code>title:foo</code>, <code>date:1911</code>, <code>subject:tree</code>. In this collection you can use {{ fields | join: ", " }}.</li>
-                    <li>Wildcards: add <code>*</code> to match any character(s), e.g. <code>foo*</code>, <code>*oo</code>. This is helpful for using a root to find words with all related endings.</li>
-                    <li>Fuzzy match: add <code>~</code> plus a number at the end of your query to specify a higher level of fuzziness in search, e.g. <code>foo~1</code>. This can help with misspellings.</li>
-                    <li>Boost term: add <code>^</code> plus a number to boost the relevance of a term in your query, e.g. <code>foo^10</code>. This can help reduce clutter of unrelated results if one of your terms is most important.</li>
+                    <li>Buscar en un campo específico: usa el nombre del campo, dos puntos y luego tu consulta, p. ej. <code>title:foo</code>, <code>date:1911</code>, <code>subject:tree</code>. En esta colección puedes usar {{ fields | join: ", " }}.</li>
+                    <li>Comodines: agrega <code>*</code> para coincidir con cualquier carácter(es), p. ej. <code>foo*</code>, <code>*oo</code>. Esto es útil para usar una raíz y encontrar palabras con todas las terminaciones relacionadas.</li>
+                    <li>Coincidencia aproximada: agrega <code>~</code> más un número al final de tu consulta para especificar un nivel más alto de aproximación en la búsqueda, p. ej. <code>foo~1</code>. Esto puede ayudar con errores ortográficos.</li>
+                    <li>Aumentar relevancia de término: agrega <code>^</code> más un número para aumentar la relevancia de un término en tu consulta, p. ej. <code>foo^10</code>. Esto puede ayudar a reducir el desorden de resultados no relacionados si uno de tus términos es el más importante.</li>
                 </ul>
             </div>
         </div>
