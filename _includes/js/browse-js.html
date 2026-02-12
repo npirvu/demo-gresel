@@ -26,7 +26,7 @@ async function loadOCRTextForItems() {
         try {
             // Adjust this path to match where your JSON files are stored
             // Common paths: /objects/[objectid].json or /assets/data/[objectid].json
-            const response = await fetch(`{{ '/objects/' | relative_url }}${item.id}.json`);
+            const response = await fetch(`{{ 'page.object_location' | relative_url }}${item.id}.json`);
             
             if (!response.ok) {
                 return; // Skip if file doesn't exist
@@ -34,18 +34,31 @@ async function loadOCRTextForItems() {
             
             const jsonData = await response.json();
             
-            // Extract text from regions - adjust based on your JSON structure
-            // Assuming structure like: { "regions": [{ "text": "..." }, { "text": "..." }] }
-            if (jsonData.regions && Array.isArray(jsonData.regions)) {
-                const allText = jsonData.regions
-                    .map(region => region.text || '')
-                    .filter(text => text.length > 0)
-                    .join(' ');
-                item.ocr_text = allText;
+            // Extract text from all pages and text regions
+            if (jsonData.pages && Array.isArray(jsonData.pages)) {
+                const allText = [];
+                
+                jsonData.pages.forEach(page => {
+                    if (page.textRegions && Array.isArray(page.textRegions)) {
+                        page.textRegions.forEach(region => {
+                            // Get text from region.text if it exists
+                            if (region.text && region.text.trim().length > 0) {
+                                allText.push(region.text);
+                            }
+                            // Also get text from textLines
+                            if (region.textLines && Array.isArray(region.textLines)) {
+                                region.textLines.forEach(line => {
+                                    if (line.text && line.text.trim().length > 0) {
+                                        allText.push(line.text);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+                
+                item.ocr_text = allText.join(' ');
             }
-            // Alternative: if your JSON has a different structure, adjust accordingly
-            // Example: if it's { "textRegions": [{ "content": "..." }] }
-            // item.ocr_text = jsonData.textRegions.map(r => r.content).join(' ');
             
         } catch (error) {
             console.log(`Could not load OCR for ${item.id}:`, error);
