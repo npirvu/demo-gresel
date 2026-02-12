@@ -26,7 +26,7 @@ async function loadOCRTextForItems() {
         try {
             // Adjust this path to match where your JSON files are stored
             // Common paths: /objects/[objectid].json or /assets/data/[objectid].json
-            const response = await fetch(`{{ 'page.object_location' | relative_url }}${item.id}.json`);
+            const response = await fetch(`{{ '/' | relative_url }}${item.object_location}`);
             
             if (!response.ok) {
                 return; // Skip if file doesn't exist
