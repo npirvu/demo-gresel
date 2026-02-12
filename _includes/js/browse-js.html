@@ -16,8 +16,45 @@ var items = [
         {% if item.image_alt_text %}"alt": {{ item.image_alt_text | escape | jsonify }}, {%- endif -%}
         "title":{{ item.title | strip | escape | jsonify }},
         {% if item.parentid %}"parent": {{ item.parentid | jsonify }}, {%- endif -%}
-        "id":{{ item.objectid | jsonify }} }{% unless forloop.last %},{% endunless %}{%- endfor -%}
+        "id":{{ item.objectid | jsonify }},
+        "ocr_text": "" }{% unless forloop.last %},{% endunless %}{%- endfor -%}
 ];
+
+// NEW: Function to load OCR text from JSON files
+async function loadOCRTextForItems() {
+    const loadingPromises = items.map(async (item) => {
+        try {
+            // Adjust this path to match where your JSON files are stored
+            // Common paths: /objects/[objectid].json or /assets/data/[objectid].json
+            const response = await fetch(`{{ '/objects/' | relative_url }}${item.id}.json`);
+            
+            if (!response.ok) {
+                return; // Skip if file doesn't exist
+            }
+            
+            const jsonData = await response.json();
+            
+            // Extract text from regions - adjust based on your JSON structure
+            // Assuming structure like: { "regions": [{ "text": "..." }, { "text": "..." }] }
+            if (jsonData.regions && Array.isArray(jsonData.regions)) {
+                const allText = jsonData.regions
+                    .map(region => region.text || '')
+                    .filter(text => text.length > 0)
+                    .join(' ');
+                item.ocr_text = allText;
+            }
+            // Alternative: if your JSON has a different structure, adjust accordingly
+            // Example: if it's { "textRegions": [{ "content": "..." }] }
+            // item.ocr_text = jsonData.textRegions.map(r => r.content).join(' ');
+            
+        } catch (error) {
+            console.log(`Could not load OCR for ${item.id}:`, error);
+        }
+    });
+    
+    await Promise.all(loadingPromises);
+    console.log('OCR text loaded for all items');
+}
 
 {% include js/get-icon.js %}
 
@@ -96,7 +133,7 @@ function filterItems(arr,q) {
         var filteredItems = [];
         for (var i = 0, len = arr.length; i < len; i++) {
             var val = "";
-        for (var k in arr[i]) { val += arr[i][k] + " "; }
+            for (var k in arr[i]) { val += arr[i][k] + " "; }
             if(val.toUpperCase().indexOf(q) != -1){
                 filteredItems.push(arr[i]);
             }
@@ -140,16 +177,19 @@ var filterTextBox = document.querySelector('#filterTextBox');
 var filterButton = document.querySelector("#filterButton");
 var browseItemsDiv = document.querySelector("#browseItems");
 
-/* filter if hash in initial URL */
-var query = "";
-if(window.location.hash) {
-    query = decodeURIComponent(location.hash.substr(1));
-    filterTextBox.value = query;
-    filterItems(items,query);
-} else {
-    query = "";
-    filterItems(items,query);
-}
+/* MODIFIED: Load OCR text before initial display */
+loadOCRTextForItems().then(() => {
+    /* filter if hash in initial URL */
+    var query = "";
+    if(window.location.hash) {
+        query = decodeURIComponent(location.hash.substr(1));
+        filterTextBox.value = query;
+        filterItems(items,query);
+    } else {
+        query = "";
+        filterItems(items,query);
+    }
+});
 
 /* filter form */
 function submitFilter() {
