@@ -16,8 +16,8 @@ var items = [
         {% if item.image_alt_text %}"alt": {{ item.image_alt_text | escape | jsonify }}, {%- endif -%}
         "title":{{ item.title | strip | escape | jsonify }},
         {% if item.parentid %}"parent": {{ item.parentid | jsonify }}, {%- endif -%}
+        {% if item.object_location %}"object_location": {{ item.object_location | jsonify }}, {%- endif -%}
         "id":{{ item.objectid | jsonify }},
-        "json":{{item.object_location | jsonify}},
         "ocr_text": "" }{% unless forloop.last %},{% endunless %}{%- endfor -%}
 ];
 

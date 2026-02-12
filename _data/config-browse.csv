@@ -4,3 +4,4 @@ creator,Creator,,,
 subject,,true
 location,,true
 identifier,,,true,Identifier
+object_location,Object Location,,true,
