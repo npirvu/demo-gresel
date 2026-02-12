@@ -17,6 +17,7 @@ var items = [
         "title":{{ item.title | strip | escape | jsonify }},
         {% if item.parentid %}"parent": {{ item.parentid | jsonify }}, {%- endif -%}
         "id":{{ item.objectid | jsonify }},
+        "json":{{item.object_location | jsonify}},
         "ocr_text": "" }{% unless forloop.last %},{% endunless %}{%- endfor -%}
 ];
 
@@ -26,7 +27,7 @@ async function loadOCRTextForItems() {
         try {
             // Adjust this path to match where your JSON files are stored
             // Common paths: /objects/[objectid].json or /assets/data/[objectid].json
-            const response = await fetch(`{{ '/' | relative_url }}${page.object_location}`);
+            const response = await fetch(`{{ '/' | relative_url }}${item.object_location}`);
             
             if (!response.ok) {
                 return; // Skip if file doesn't exist
