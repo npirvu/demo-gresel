@@ -16,58 +16,40 @@ var items = [
         {% if item.image_alt_text %}"alt": {{ item.image_alt_text | escape | jsonify }}, {%- endif -%}
         "title":{{ item.title | strip | escape | jsonify }},
         {% if item.parentid %}"parent": {{ item.parentid | jsonify }}, {%- endif -%}
-        {% if item.object_location %}"object_location": {{ item.object_location | jsonify }}, {%- endif -%}
+        {% if item.object_transcript %}"object_transcript": {{ item.object_transcript | jsonify }}, {%- endif -%}
         "id":{{ item.objectid | jsonify }},
-        "ocr_text": "" }{% unless forloop.last %},{% endunless %}{%- endfor -%}
+        "transcript_text": "" }{% unless forloop.last %},{% endunless %}{%- endfor -%}
 ];
 
-// NEW: Function to load OCR text from JSON files
-async function loadOCRTextForItems() {
+// Function to load transcript text from TXT files
+async function loadTranscriptTextForItems() {
     const loadingPromises = items.map(async (item) => {
         try {
-            // Adjust this path to match where your JSON files are stored
-            // Common paths: /objects/[objectid].json or /assets/data/[objectid].json
-            const response = await fetch(`{{ '/' | relative_url }}${item.object_location}`);
+            // Check if item has a transcript file
+            if (!item.object_transcript) {
+                return; // Skip if no transcript
+            }
+            
+            // Fetch the transcript file
+            const response = await fetch(`{{ '/' | relative_url }}${item.object_transcript}`);
             
             if (!response.ok) {
                 return; // Skip if file doesn't exist
             }
             
-            const jsonData = await response.json();
+            // Read the text content
+            const transcriptText = await response.text();
             
-            // Extract text from all pages and text regions
-            if (jsonData.pages && Array.isArray(jsonData.pages)) {
-                const allText = [];
-                
-                jsonData.pages.forEach(page => {
-                    if (page.textRegions && Array.isArray(page.textRegions)) {
-                        page.textRegions.forEach(region => {
-                            // Get text from region.text if it exists
-                            if (region.text && region.text.trim().length > 0) {
-                                allText.push(region.text);
-                            }
-                            // Also get text from textLines
-                            if (region.textLines && Array.isArray(region.textLines)) {
-                                region.textLines.forEach(line => {
-                                    if (line.text && line.text.trim().length > 0) {
-                                        allText.push(line.text);
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-                
-                item.ocr_text = allText.join(' ');
-            }
+            // Store the transcript text
+            item.transcript_text = transcriptText;
             
         } catch (error) {
-            console.log(`Could not load OCR for ${item.id}:`, error);
+            console.log(`Could not load transcript for ${item.id}:`, error);
         }
     });
     
     await Promise.all(loadingPromises);
-    console.log('OCR text loaded for all items');
+    console.log('Transcript text loaded for all items');
 }
 
 {% include js/get-icon.js %}
@@ -77,7 +59,7 @@ function makeCard(obj) {
     // placeholder image for lazyload
     var placeholder = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3C/svg%3E";
     // find item link
-    var itemHref = `{{ '/items/' | relative_url }}${ obj.parent ? obj.parent + ".html#" + obj.id : obj.id + ".html"}`; 
+    var itemHref = `{{ '/items/' | relative_url }}${ obj.parent ? obj.parent + ".html#" | obj.id : obj.id + ".html"}`; 
     // find image
     var imgSrc, thumbIcon;
     // if there is a thumb in the csv display it
@@ -191,8 +173,8 @@ var filterTextBox = document.querySelector('#filterTextBox');
 var filterButton = document.querySelector("#filterButton");
 var browseItemsDiv = document.querySelector("#browseItems");
 
-/* MODIFIED: Load OCR text before initial display */
-loadOCRTextForItems().then(() => {
+/* Load transcript text before initial display */
+loadTranscriptTextForItems().then(() => {
     /* filter if hash in initial URL */
     var query = "";
     if(window.location.hash) {
