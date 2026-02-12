@@ -59,7 +59,7 @@ function makeCard(obj) {
     // placeholder image for lazyload
     var placeholder = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3C/svg%3E";
     // find item link
-    var itemHref = `{{ '/items/' | relative_url }}${ obj.parent ? obj.parent + ".html#" | obj.id : obj.id + ".html"}`; 
+    var itemHref = `{{ '/items/' | relative_url }}${ obj.parent ? obj.parent + ".html#" + obj.id : obj.id + ".html"}`; 
     // find image
     var imgSrc, thumbIcon;
     // if there is a thumb in the csv display it
@@ -116,7 +116,7 @@ function makeCard(obj) {
     return card;
 }
 
-/* filter items function */
+/* MODIFIED: filter items function with keyword search */
 function filterItems(arr,q) {
     // show loading icon
     loadingIcon.classList.remove("d-none");
@@ -124,13 +124,28 @@ function filterItems(arr,q) {
     if (q=="") { 
         var filteredItems = arr; 
     } else {
-        q = q.trim().toUpperCase(); 
-        // js indexOf filter
+        // Split query into individual keywords
+        var keywords = q.trim().toUpperCase().split(/\s+/);
+        
+        // Filter items that contain ANY of the keywords
         var filteredItems = [];
         for (var i = 0, len = arr.length; i < len; i++) {
             var val = "";
-            for (var k in arr[i]) { val += arr[i][k] + " "; }
-            if(val.toUpperCase().indexOf(q) != -1){
+            for (var k in arr[i]) { 
+                val += arr[i][k] + " "; 
+            }
+            val = val.toUpperCase();
+            
+            // Check if ANY keyword matches
+            var hasMatch = false;
+            for (var j = 0; j < keywords.length; j++) {
+                if (val.indexOf(keywords[j]) != -1) {
+                    hasMatch = true;
+                    break; // Found at least one match, no need to check more
+                }
+            }
+            
+            if (hasMatch) {
                 filteredItems.push(arr[i]);
             }
         }
