@@ -3,24 +3,34 @@ import sys
 from pathlib import Path
 
 def restore_text_lines(text):
-    lines = text.split('n')
-    restored_lines = []
+    # Split by double newlines to get paragraphs
+    paragraphs = text.split('\n\n\n')
     
-    for line in lines:
+    restored_paragraphs = []
+    
+    for paragraph in paragraphs:
         # Strip whitespace
-        line = line.strip()
+        paragraph = paragraph.strip()
         
-        # Skip empty lines (preserve them)
-        if not line:
-            restored_lines.append(line)
+        if not paragraph:
             continue
         
-        # Remove soft hyphens at end of lines followed by continuation
-        line = re.sub(r'¬\s*', '', line)
+        # Join all lines within this paragraph into a single line
+        lines = paragraph.split('\n')
+        joined = ' '.join(line.strip() for line in lines if line.strip())
         
-        restored_lines.append(line)
+        restored_paragraphs.append(joined)
     
-    return '\n'.join(restored_lines)
+    # Join paragraphs back with double newlines
+    text = '\n\n\n'.join(restored_paragraphs)
+        
+    # Remove soft hyphens
+    text = re.sub(r'¬\s*', '', text)
+    
+    # Fix double spaces
+    text = re.sub(r'  +', ' ', text)
+    
+    return text
 
 def process_file(input_file, output_file=None):
     input_path = Path(input_file)
