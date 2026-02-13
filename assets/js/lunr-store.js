@@ -11,7 +11,7 @@ var store = [
 {%- for item in items -%} 
 {  
 {% for f in fields %}{% if item[f.field] %}{{ f.field | jsonify }}: {{ item[f.field] | normalize_whitespace | replace: '""','"' | jsonify }},{% endif %}{% endfor %}
-{%- if item.object_location -%}"object_location": {{ item.object_location | jsonify }},{%- endif -%}
+{%- if item.object_transcript -%}"object_transcript": {{ item.object_transcript | jsonify }},{%- endif -%}
 "ocr_text": "",
 "id": {% if item.parentid %}{{ item.parentid | append: '.html#' | append: item.objectid | jsonify }}{% else %}{{item.objectid | append: '.html' | jsonify }}{% endif %}
 
@@ -23,11 +23,11 @@ var store = [
 (async function loadOCRText() {
     const loadingPromises = store.map(async (item) => {
         try {
-            if (!item.object_location) {
+            if (!item.object_transcript) {
                 return;
             }
             
-            const response = await fetch(`{{ '/' | relative_url }}${item.object_location}`);
+            const response = await fetch(`{{ '/' | relative_url }}${item.object_transcript}`);
             
             if (!response.ok) {
                 return;
