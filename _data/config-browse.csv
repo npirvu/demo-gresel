@@ -5,3 +5,4 @@ subject,,true
 location,,true,,Location
 identifier,,,true,Identifier
 object_transcript,Object Transcript,,true,
+object_location,Object Location,,true
