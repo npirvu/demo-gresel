@@ -12,15 +12,15 @@ var store = [
 {  
 {% for f in fields %}{% if item[f.field] %}{{ f.field | jsonify }}: {{ item[f.field] | normalize_whitespace | replace: '""','"' | jsonify }},{% endif %}{% endfor %}
 {%- if item.object_transcript -%}"object_transcript": {{ item.object_transcript | jsonify }},{%- endif -%}
-"ocr_text": "",
+"transcript_text": "",
 "id": {% if item.parentid %}{{ item.parentid | append: '.html#' | append: item.objectid | jsonify }}{% else %}{{item.objectid | append: '.html' | jsonify }}{% endif %}
 
 }{%- unless forloop.last -%},{%- endunless -%}
 {%- endfor -%}
 ];
 
-// Load OCR text from JSON files
-(async function loadOCRText() {
+// Load transcript text from TXT files
+(async function loadTranscriptText() {
     const loadingPromises = store.map(async (item) => {
         try {
             if (!item.object_transcript) {
@@ -33,36 +33,17 @@ var store = [
                 return;
             }
             
-            const jsonData = await response.json();
+            // Read the text content directly
+            const transcriptText = await response.text();
             
-            if (jsonData.pages && Array.isArray(jsonData.pages)) {
-                const allText = [];
-                
-                jsonData.pages.forEach(page => {
-                    if (page.textRegions && Array.isArray(page.textRegions)) {
-                        page.textRegions.forEach(region => {
-                            if (region.text && region.text.trim().length > 0) {
-                                allText.push(region.text);
-                            }
-                            if (region.textLines && Array.isArray(region.textLines)) {
-                                region.textLines.forEach(line => {
-                                    if (line.text && line.text.trim().length > 0) {
-                                        allText.push(line.text);
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-                
-                item.ocr_text = allText.join(' ');
-            }
+            // Store the transcript text
+            item.transcript_text = transcriptText;
             
         } catch (error) {
-            console.log(`Could not load OCR for ${item.id}:`, error);
+            console.log(`Could not load transcript for ${item.id}:`, error);
         }
     });
     
     await Promise.all(loadingPromises);
-    console.log('OCR text loaded into search store');
+    console.log('Transcript text loaded into search store');
 })();
