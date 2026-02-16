@@ -135,7 +135,7 @@ def process_folder(folder_path):
         for page_num, xml_file in sorted(xmls[base]):
             xml_path = os.path.join(folder_path, xml_file)
             image_filename = f"{base}_page-{page_num}.jpg"
-            image_path = f"objects/{folder_name}/images/{image_filename}"
+            image_path = f"objects/newspapers/{folder_name}/images/{image_filename}"
             
             # Get actual image dimensions
             images_folder = os.path.join(os.path.dirname(folder_path), "images")
@@ -174,14 +174,14 @@ def process_folder(folder_path):
             "tileSources": osd_tiles
         }
         
-        out_path = os.path.join(folder_path, f"{base}_osd.json")
+        out_path = os.path.join(folder_path, f"{base}.json")
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(output, f, indent=2, ensure_ascii=False)
             
         print(f"✓ Generated: {out_path}\n")
 
 def main():
-    ROOT = r"C:\Users\Nuria\Documents\GRESEL\repositorio\demo-gresel\objects"
+    ROOT = r"C:\Users\Nuria\Documents\GRESEL\repositorio\demo-gresel\objects\newspapers"
     
     print("=" * 60)
     print("PAGE XML to JSON Converter")

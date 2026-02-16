@@ -22,10 +22,11 @@ def restore_text_lines(text):
         restored_paragraphs.append(joined)
     
     # Join paragraphs back with double newlines
-    text = '\n\n\n'.join(restored_paragraphs)
+    text = '\n'.join(restored_paragraphs)
         
     # Remove soft hyphens
     text = re.sub(r'¬\s*', '', text)
+    text = re.sub(r'-\s*', '', text)
     
     # Fix double spaces
     text = re.sub(r'  +', ' ', text)

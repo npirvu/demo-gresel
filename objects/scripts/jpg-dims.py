@@ -2,7 +2,7 @@ from PIL import Image
 import os
 
 # Root folder
-root_path = r"C:/Users/Nuria/Documents/GRESEL/repositorio/demo-gresel/objects"
+root_path = r"C:/Users/Nuria/Documents/GRESEL/repositorio/demo-gresel/objects/newspapers"
 
 print("Checking all images recursively...\n")
 
