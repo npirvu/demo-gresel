@@ -94,32 +94,42 @@ custom-foot: js/timeline-js.html
 {%- assign monthNames = "01:January,02:February,03:March,04:April,05:May,06:June,07:July,08:August,09:September,10:October,11:November,12:December" | split: "," -%}
 
 <div class="float-end" id="timeline-filters">
-    <div class="d-inline-block me-2">
-        <label for="dayFilter" class="form-label mb-0 me-1">Day:</label>
-        <select id="dayFilter" class="form-select form-select-sm d-inline-block" style="width: auto;">
-            <option value="">All</option>
+    {%- if uniqueDays.size > 0 -%}
+    <div class="dropdown d-inline-block me-2" id="day-nav">
+        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dayButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span id="dayButtonText">Day</span>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dayButton">
+            <a class="dropdown-item day-filter-option" href="#" data-day="">All Days</a>
+            <div class="dropdown-divider"></div>
             {% for day in uniqueDays %}
-            <option value="{{ day }}">{{ day }}</option>
+            <a class="dropdown-item day-filter-option" href="#" data-day="{{ day }}">{{ day }}</a>
             {% endfor %}
-        </select>
+        </div>
     </div>
+    {%- endif -%}
     
-    <div class="d-inline-block me-2">
-        <label for="monthFilter" class="form-label mb-0 me-1">Month:</label>
-        <select id="monthFilter" class="form-select form-select-sm d-inline-block" style="width: auto;">
-            <option value="">All</option>
+    {%- if uniqueMonths.size > 0 -%}
+    <div class="dropdown d-inline-block me-2" id="month-nav">
+        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="monthButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span id="monthButtonText">Month</span>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="monthButton">
+            <a class="dropdown-item month-filter-option" href="#" data-month="">All Months</a>
+            <div class="dropdown-divider"></div>
             {% for month in uniqueMonths %}
             {%- assign monthNum = month -%}
             {%- if month.size == 1 -%}{%- assign monthNum = "0" | append: month -%}{%- endif -%}
             {%- for mn in monthNames -%}
               {%- assign mnParts = mn | split: ":" -%}
               {%- if mnParts[0] == monthNum -%}
-            <option value="{{ month }}">{{ mnParts[1] }}</option>
+            <a class="dropdown-item month-filter-option" href="#" data-month="{{ month }}">{{ mnParts[1] }}</a>
               {%- endif -%}
             {%- endfor -%}
             {% endfor %}
-        </select>
+        </div>
     </div>
+    {%- endif -%}
     
     {%- if navYears -%}
     <div class="dropdown d-inline-block" id="year-nav">
@@ -188,15 +198,17 @@ custom-foot: js/timeline-js.html
 <script>
 // Timeline filtering functionality
 (function() {
-    const dayFilter = document.getElementById('dayFilter');
-    const monthFilter = document.getElementById('monthFilter');
+    const dayOptions = document.querySelectorAll('.day-filter-option');
+    const monthOptions = document.querySelectorAll('.month-filter-option');
+    const dayButtonText = document.getElementById('dayButtonText');
+    const monthButtonText = document.getElementById('monthButtonText');
     const timelineItems = document.querySelectorAll('.timeline-item');
     const yearRows = document.querySelectorAll('#timeline tbody tr');
     
+    let selectedDay = '';
+    let selectedMonth = '';
+    
     function filterTimeline() {
-        const selectedDay = dayFilter.value;
-        const selectedMonth = monthFilter.value;
-        
         // Track which years have visible items
         const visibleYears = new Set();
         
@@ -237,25 +249,56 @@ custom-foot: js/timeline-js.html
         });
         
         // Update filter counts
-        updateFilterCounts(selectedDay, selectedMonth);
-    }
-    
-    function updateFilterCounts(selectedDay, selectedMonth) {
         const visibleCount = Array.from(timelineItems).filter(item => 
             item.style.display !== 'none'
         ).length;
-        
-        // You can add a count display here if desired
         console.log(`Showing ${visibleCount} of ${timelineItems.length} items`);
     }
     
-    // Add event listeners
-    if (dayFilter) {
-        dayFilter.addEventListener('change', filterTimeline);
-    }
+    // Day filter click handlers
+    dayOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            selectedDay = this.dataset.day;
+            
+            // Update button text
+            if (dayButtonText) {
+                dayButtonText.textContent = selectedDay ? 'Day: ' + selectedDay : 'Day';
+            }
+            
+            // Update active state
+            dayOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            
+            filterTimeline();
+        });
+    });
     
-    if (monthFilter) {
-        monthFilter.addEventListener('change', filterTimeline);
+    // Month filter click handlers
+    monthOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            selectedMonth = this.dataset.month;
+            
+            // Update button text
+            if (monthButtonText) {
+                monthButtonText.textContent = selectedMonth ? this.textContent : 'Month';
+            }
+            
+            // Update active state
+            monthOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            
+            filterTimeline();
+        });
+    });
+    
+    // Set initial active state on "All" options
+    if (dayOptions.length > 0) {
+        dayOptions[0].classList.add('active');
+    }
+    if (monthOptions.length > 0) {
+        monthOptions[0].classList.add('active');
     }
 })();
 </script>
