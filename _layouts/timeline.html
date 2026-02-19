@@ -134,11 +134,13 @@ custom-foot: js/timeline-js.html
     {%- if navYears -%}
     <div class="dropdown d-inline-block" id="year-nav">
         <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="yearButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Year
+            <span id="yearButtonText">Year</span>
         </button>
         <div class="dropdown-menu" aria-labelledby="yearButton">
+            <a class="dropdown-item year-filter-option" href="#" data-year="">All Years</a>
+            <div class="dropdown-divider"></div>
             {% for y in navYears %}
-            <a class="dropdown-item" href="#y{{ y }}">{{ y }}</a>{% endfor %}
+            <a class="dropdown-item year-filter-option" href="#" data-year="{{ y }}">{{ y }}</a>{% endfor %}
         </div>
     </div>
     {%- endif -%}
@@ -172,7 +174,13 @@ custom-foot: js/timeline-js.html
                         <div class="col-lg-4 col-md-6 timeline-item" data-year="{{ item_year }}" data-month="{{ item_month }}" data-day="{{ item_day }}">
                             <a href="{{ '/items/' | relative_url }}{% if item.parentid %}{{ item.parentid }}.html#{{ item.objectid }}{% else %}{{ item.objectid }}.html{% endif %}" >
                                 {% if item.image_thumb %}
-                                <img class="lazyload img-thumbnail timeline-thumb" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3C/svg%3E" data-src="{{ item.image_thumb | relative_url }}" alt="{{ item.image_alt_text | default: item.description | default: item.title | escape }}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ item.title | escape }}">
+                                <div class="position-relative">
+                                    <img class="lazyload img-thumbnail timeline-thumb" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3C/svg%3E" data-src="{{ item.image_thumb | relative_url }}" alt="{{ item.image_alt_text | default: item.description | default: item.title | escape }}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ item.title | escape }}">
+                                    <div class="position-absolute bottom-0 start-0 end-0 bg-dark bg-opacity-75 text-white p-2" style="font-size: 0.85rem;">
+                                        <div class="fw-bold text-truncate">{{ item.title }}</div>
+                                        <div class="small">{{ item[field] }}</div>
+                                    </div>
+                                </div>
                                 {% else %}
                                 <div class="card"> 
                                     <div class="card-body text-center">
@@ -181,6 +189,7 @@ custom-foot: js/timeline-js.html
                                             {%- assign icon_template = item.display_template | default: item.format -%}
                                             <use xlink:href="{{ '/assets/lib/cb-icons.svg' | relative_url }}#{% if icon_template contains 'image' %}icon-image{% elsif icon_template contains 'pdf' %}icon-pdf{% elsif icon_template contains 'audio' %}icon-audio{% elsif icon_template contains 'video' %}icon-video{% elsif icon_template contains 'panorama' %}icon-panorama{% elsif icon_template contains 'compound' %}icon-compound-object{% elsif icon_template contains 'multiple' %}icon-multiple{% else %}icon-default{% endif %}"/>
                                         </svg>
+                                        <div class="mt-2 small text-muted">{{ item[field] }}</div>
                                     </div>
                                 </div>
                                 {% endif %}
@@ -194,6 +203,53 @@ custom-foot: js/timeline-js.html
         {% endfor %}
     </tbody>
 </table>
+
+<script>
+// Timeline year filtering functionality
+(function() {
+    const yearOptions = document.querySelectorAll('.year-filter-option');
+    const yearButtonText = document.getElementById('yearButtonText');
+    const yearRows = document.querySelectorAll('#timeline tbody tr');
+    
+    let selectedYear = '';
+    
+    function filterByYear() {
+        yearRows.forEach(row => {
+            const yearId = row.id.replace('y', '');
+            
+            if (selectedYear === '' || yearId === selectedYear) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+    
+    // Year filter click handlers
+    yearOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            selectedYear = this.dataset.year;
+            
+            // Update button text
+            if (yearButtonText) {
+                yearButtonText.textContent = selectedYear ? 'Year: ' + selectedYear : 'Year';
+            }
+            
+            // Update active state
+            yearOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            
+            filterByYear();
+        });
+    });
+    
+    // Set initial active state on "All Years" option
+    if (yearOptions.length > 0) {
+        yearOptions[0].classList.add('active');
+    }
+})();
+</script>
 
 <script>
 // Timeline filtering functionality
