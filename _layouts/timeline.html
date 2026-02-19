@@ -64,17 +64,76 @@ custom-foot: js/timeline-js.html
 {%- if t == 0 -%}{{ i }}{% unless forloop.last %};{% endunless %}{% endif %}{% endfor %}{%- endcapture -%}
 {%- assign navYears = navYears | split: ";" -%}
 {%- endif -%}
-{%- if navYears -%}
-<div class="dropdown float-end" id="year-nav">
-    <button class="btn btn-primary dropdown-toggle" type="button" id="yearButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Year
-    </button>
-    <div class="dropdown-menu" aria-labelledby="yearButton">
-        {% for y in navYears %}
-        <a class="dropdown-item" href="#y{{ y }}">{{ y }}</a>{% endfor %}
+
+{%- comment -%}Build unique months and days from all dates{%- endcomment -%}
+{%- assign all_months = "" | split: "" -%}
+{%- assign all_days = "" | split: "" -%}
+{%- for item in items -%}
+  {%- assign date_value = item[field] | strip -%}
+  {%- if date_value contains "/" -%}
+    {%- assign date_parts = date_value | split: "/" -%}
+    {%- if date_parts.size == 3 -%}
+      {%- assign day = date_parts[0] -%}
+      {%- assign month = date_parts[1] -%}
+      {%- assign all_months = all_months | push: month -%}
+      {%- assign all_days = all_days | push: day -%}
+    {%- endif -%}
+  {%- elsif date_value contains "-" -%}
+    {%- assign date_parts = date_value | split: "-" -%}
+    {%- if date_parts.size == 3 -%}
+      {%- assign day = date_parts[0] -%}
+      {%- assign month = date_parts[1] -%}
+      {%- assign all_months = all_months | push: month -%}
+      {%- assign all_days = all_days | push: day -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- assign uniqueMonths = all_months | uniq | sort -%}
+{%- assign uniqueDays = all_days | uniq | sort_natural -%}
+
+{%- assign monthNames = "01:January,02:February,03:March,04:April,05:May,06:June,07:July,08:August,09:September,10:October,11:November,12:December" | split: "," -%}
+
+<div class="float-end" id="timeline-filters">
+    <div class="d-inline-block me-2">
+        <label for="dayFilter" class="form-label mb-0 me-1">Day:</label>
+        <select id="dayFilter" class="form-select form-select-sm d-inline-block" style="width: auto;">
+            <option value="">All</option>
+            {% for day in uniqueDays %}
+            <option value="{{ day }}">{{ day }}</option>
+            {% endfor %}
+        </select>
     </div>
+    
+    <div class="d-inline-block me-2">
+        <label for="monthFilter" class="form-label mb-0 me-1">Month:</label>
+        <select id="monthFilter" class="form-select form-select-sm d-inline-block" style="width: auto;">
+            <option value="">All</option>
+            {% for month in uniqueMonths %}
+            {%- assign monthNum = month -%}
+            {%- if month.size == 1 -%}{%- assign monthNum = "0" | append: month -%}{%- endif -%}
+            {%- for mn in monthNames -%}
+              {%- assign mnParts = mn | split: ":" -%}
+              {%- if mnParts[0] == monthNum -%}
+            <option value="{{ month }}">{{ mnParts[1] }}</option>
+              {%- endif -%}
+            {%- endfor -%}
+            {% endfor %}
+        </select>
+    </div>
+    
+    {%- if navYears -%}
+    <div class="dropdown d-inline-block" id="year-nav">
+        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="yearButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Year
+        </button>
+        <div class="dropdown-menu" aria-labelledby="yearButton">
+            {% for y in navYears %}
+            <a class="dropdown-item" href="#y{{ y }}">{{ y }}</a>{% endfor %}
+        </div>
+    </div>
+    {%- endif -%}
 </div>
-{%- endif -%}
+<div class="clearfix"></div>
 
 {{ content }}
 
@@ -97,7 +156,10 @@ custom-foot: js/timeline-js.html
                       {%- if item_year == year -%}
                         {%- assign item_idx = parts[1] | plus: 0 -%}
                         {%- assign item = items[item_idx] -%}
-                        <div class="col-lg-4 col-md-6">
+                        {%- assign date_parts_full = sort_date | split: "-" -%}
+                        {%- assign item_month = date_parts_full[1] | replace: "0", "" | plus: 0 -%}
+                        {%- assign item_day = date_parts_full[2] | replace: "0", "" | plus: 0 -%}
+                        <div class="col-lg-4 col-md-6 timeline-item" data-year="{{ item_year }}" data-month="{{ item_month }}" data-day="{{ item_day }}">
                             <a href="{{ '/items/' | relative_url }}{% if item.parentid %}{{ item.parentid }}.html#{{ item.objectid }}{% else %}{{ item.objectid }}.html{% endif %}" >
                                 {% if item.image_thumb %}
                                 <img class="lazyload img-thumbnail timeline-thumb" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3C/svg%3E" data-src="{{ item.image_thumb | relative_url }}" alt="{{ item.image_alt_text | default: item.description | default: item.title | escape }}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ item.title | escape }}">
@@ -122,3 +184,78 @@ custom-foot: js/timeline-js.html
         {% endfor %}
     </tbody>
 </table>
+
+<script>
+// Timeline filtering functionality
+(function() {
+    const dayFilter = document.getElementById('dayFilter');
+    const monthFilter = document.getElementById('monthFilter');
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    const yearRows = document.querySelectorAll('#timeline tbody tr');
+    
+    function filterTimeline() {
+        const selectedDay = dayFilter.value;
+        const selectedMonth = monthFilter.value;
+        
+        // Track which years have visible items
+        const visibleYears = new Set();
+        
+        timelineItems.forEach(item => {
+            const itemDay = item.dataset.day;
+            const itemMonth = item.dataset.month;
+            const itemYear = item.dataset.year;
+            
+            let showItem = true;
+            
+            // Filter by day
+            if (selectedDay && itemDay !== selectedDay) {
+                showItem = false;
+            }
+            
+            // Filter by month
+            if (selectedMonth && itemMonth !== selectedMonth) {
+                showItem = false;
+            }
+            
+            // Show/hide item
+            if (showItem) {
+                item.style.display = '';
+                visibleYears.add(itemYear);
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        // Show/hide year rows based on whether they have visible items
+        yearRows.forEach(row => {
+            const yearId = row.id.replace('y', '');
+            if (visibleYears.has(yearId)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Update filter counts
+        updateFilterCounts(selectedDay, selectedMonth);
+    }
+    
+    function updateFilterCounts(selectedDay, selectedMonth) {
+        const visibleCount = Array.from(timelineItems).filter(item => 
+            item.style.display !== 'none'
+        ).length;
+        
+        // You can add a count display here if desired
+        console.log(`Showing ${visibleCount} of ${timelineItems.length} items`);
+    }
+    
+    // Add event listeners
+    if (dayFilter) {
+        dayFilter.addEventListener('change', filterTimeline);
+    }
+    
+    if (monthFilter) {
+        monthFilter.addEventListener('change', filterTimeline);
+    }
+})();
+</script>
