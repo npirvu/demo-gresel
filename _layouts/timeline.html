@@ -91,7 +91,9 @@ custom-foot: js/timeline-js.html
 {%- assign uniqueMonths = all_months | uniq | sort -%}
 {%- assign uniqueDays = all_days | uniq | sort_natural -%}
 
+{%- assign monthNames = "01:January,02:February,03:March,04:April,05:May,06:June,07:July,08:August,09:September,10:October,11:November,12:December" | split: "," -%}
 
+<div class="float-end" id="timeline-filters"> 
     {%- if navYears -%}
     <div class="dropdown d-inline-block" id="year-nav">
         <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="yearButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
