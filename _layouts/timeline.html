@@ -10,63 +10,6 @@ custom-foot: js/timeline-js.html
 {%- assign items = site.data[site.metadata] | where_exp: 'item','item.objectid and item.parentid == nil' -%}
 {% endif %}
 {%- assign items = items | where_exp: 'item','item[field]' -%}
-
-{%- comment -%}Parse and normalize all dates to YYYY-MM-DD format for sorting{%- endcomment -%}
-{%- assign items_with_dates = "" | split: "" -%}
-{%- for item in items -%}
-  {%- assign date_value = item[field] | strip -%}
-  {%- assign sort_date = "" -%}
-  
-  {%- if date_value contains "/" -%}
-    {%- comment -%}Handle DD/MM/YYYY format{%- endcomment -%}
-    {%- assign date_parts = date_value | split: "/" -%}
-    {%- if date_parts.size == 3 -%}
-      {%- assign day = date_parts[0] -%}
-      {%- assign month = date_parts[1] -%}
-      {%- assign year = date_parts[2] -%}
-      {%- if day.size == 1 -%}{%- assign day = "0" | append: day -%}{%- endif -%}
-      {%- if month.size == 1 -%}{%- assign month = "0" | append: month -%}{%- endif -%}
-      {%- assign sort_date = year | append: "-" | append: month | append: "-" | append: day -%}
-    {%- else -%}
-      {%- assign sort_date = date_parts[-1] | append: "-01-01" -%}
-    {%- endif -%}
-  {%- elsif date_value contains "-" -%}
-    {%- comment -%}Handle DD-MM-YYYY format{%- endcomment -%}
-    {%- assign date_parts = date_value | split: "-" -%}
-    {%- if date_parts.size == 3 -%}
-      {%- assign day = date_parts[0] -%}
-      {%- assign month = date_parts[1] -%}
-      {%- assign year = date_parts[2] -%}
-      {%- if day.size == 1 -%}{%- assign day = "0" | append: day -%}{%- endif -%}
-      {%- if month.size == 1 -%}{%- assign month = "0" | append: month -%}{%- endif -%}
-      {%- assign sort_date = year | append: "-" | append: month | append: "-" | append: day -%}
-    {%- else -%}
-      {%- assign sort_date = date_value | append: "-01-01" -%}
-    {%- endif -%}
-  {%- else -%}
-    {%- comment -%}Handle YYYY only format{%- endcomment -%}
-    {%- assign sort_date = date_value | append: "-01-01" -%}
-  {%- endif -%}
-  
-  {%- assign item_data = item | jsonify -%}
-  {%- assign combined = sort_date | append: "|||" | append: item_data -%}
-  {%- assign items_with_dates = items_with_dates | push: combined -%}
-{%- endfor -%}
-
-{%- assign sorted_items_raw = items_with_dates | sort -%}
-
-{%- comment -%}Extract sorted items and reconstruct year groups{%- endcomment -%}
-{%- assign sorted_items = "" | split: "" -%}
-{%- assign year_groups = "" | split: "" -%}
-{%- for item_str in sorted_items_raw -%}
-  {%- assign parts = item_str | split: "|||" -%}
-  {%- assign sort_date = parts[0] -%}
-  {%- assign year = sort_date | split: "-" | first -%}
-  {%- unless year_groups contains year -%}
-    {%- assign year_groups = year_groups | push: year -%}
-  {%- endunless -%}
-{%- endfor -%}
-
 {%- assign raw-dates = items | map: field | compact | uniq -%}
 {%- capture clean-years -%}{% for date in raw-dates %}{% if date contains "-" %}{{ date | strip | split: "-" | last }}{% elsif date contains "/" %}{{ date | strip | split: "/" | last }}{% else %}{{ date | strip }}{% endif %}{% unless forloop.last %};{% endunless %}{%- endfor -%}{%- endcapture -%}
 {%- assign uniqueYears = clean-years | replace: ";;",";" | split: ";" | compact | uniq | sort -%}
@@ -103,32 +46,25 @@ custom-foot: js/timeline-js.html
             </th>
             <td>
                 <div class="row">
-                    {%- comment -%}Get items for this year from sorted list{%- endcomment -%}
-                    {% for item_str in sorted_items_raw %}
-                      {%- assign parts = item_str | split: "|||" -%}
-                      {%- assign sort_date = parts[0] -%}
-                      {%- assign item_year = sort_date | split: "-" | first -%}
-                      {%- if item_year == year -%}
-                        {%- assign item_json = parts[1] -%}
-                        {%- assign item = item_json | parse_json -%}
-                        <div class="col-lg-4 col-md-6">
-                            <a href="{{ '/items/' | relative_url }}{% if item.parentid %}{{ item.parentid }}.html#{{ item.objectid }}{% else %}{{ item.objectid }}.html{% endif %}" >
-                                {% if item.image_thumb %}
-                                <img class="lazyload img-thumbnail timeline-thumb" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3C/svg%3E" data-src="{{ item.image_thumb | relative_url }}" alt="{{ item.image_alt_text | default: item.description | default: item.title | escape }}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ item.title | escape }}">
-                                {% else %}
-                                <div class="card"> 
-                                    <div class="card-body text-center">
-                                        <div class="h5 text-dark">{{ item.title }}</div>
-                                        <svg class="bi timeline-thumb text-body" fill="currentColor" aria-hidden="true">
-                                            {%- assign icon_template = item.display_template | default: item.format -%}
-                                            <use xlink:href="{{ '/assets/lib/cb-icons.svg' | relative_url }}#{% if icon_template contains 'image' %}icon-image{% elsif icon_template contains 'pdf' %}icon-pdf{% elsif icon_template contains 'audio' %}icon-audio{% elsif icon_template contains 'video' %}icon-video{% elsif icon_template contains 'panorama' %}icon-panorama{% elsif icon_template contains 'compound' %}icon-compound-object{% elsif icon_template contains 'multiple' %}icon-multiple{% else %}icon-default{% endif %}"/>
-                                        </svg>
-                                    </div>
+                    {%- assign inYear = items | where_exp: 'item', 'item[field] contains year' -%}
+                    {% for item in inYear %}
+                    <div class="col-lg-4 col-md-6">
+                        <a href="{{ '/items/' | relative_url }}{% if item.parentid %}{{ item.parentid }}.html#{{ item.objectid }}{% else %}{{ item.objectid }}.html{% endif %}" >
+                            {% if item.image_thumb %}
+                            <img class="lazyload img-thumbnail timeline-thumb" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3C/svg%3E" data-src="{{ item.image_thumb | relative_url }}" alt="{{ item.image_alt_text | default: item.description | default: item.title | escape }}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ item.title | escape }}">
+                            {% else %}
+                            <div class="card"> 
+                                <div class="card-body text-center">
+                                    <div class="h5 text-dark">{{ item.title }}</div>
+                                    <svg class="bi timeline-thumb text-body" fill="currentColor" aria-hidden="true">
+                                        {%- assign icon_template = item.display_template | default: item.format -%}
+                                        <use xlink:href="{{ '/assets/lib/cb-icons.svg' | relative_url }}#{% if icon_template contains 'image' %}icon-image{% elsif icon_template contains 'pdf' %}icon-pdf{% elsif icon_template contains 'audio' %}icon-audio{% elsif icon_template contains 'video' %}icon-video{% elsif icon_template contains 'panorama' %}icon-panorama{% elsif icon_template contains 'compound' %}icon-compound-object{% elsif icon_template contains 'multiple' %}icon-multiple{% else %}icon-default{% endif %}"/>
+                                    </svg>
                                 </div>
-                                {% endif %}
-                            </a>
-                        </div>
-                      {%- endif -%}
+                            </div>
+                            {% endif %}
+                        </a>
+                    </div>
                     {% endfor %}
                 </div>
             </td>
