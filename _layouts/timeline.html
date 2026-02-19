@@ -59,81 +59,8 @@ custom-foot: js/timeline-js.html
 {%- assign raw-dates = items | map: field | compact | uniq -%}
 {%- capture clean-years -%}{% for date in raw-dates %}{% if date contains "-" %}{{ date | strip | split: "-" | last }}{% elsif date contains "/" %}{{ date | strip | split: "/" | last }}{% else %}{{ date | strip }}{% endif %}{% unless forloop.last %};{% endunless %}{%- endfor -%}{%- endcapture -%}
 {%- assign uniqueYears = clean-years | replace: ";;",";" | split: ";" | compact | uniq | sort -%}
-{%- if site.data.theme.year-navigation -%}
-{%- assign navYears = site.data.theme.year-navigation | split: ";" -%}
-{%- elsif site.data.theme.year-nav-increment -%}
-{%- capture navYears -%}
-{%- for i in uniqueYears -%}{%- assign t = i | modulo: site.data.theme.year-nav-increment -%}
-{%- if t == 0 -%}{{ i }}{% unless forloop.last %};{% endunless %}{% endif %}{% endfor %}{%- endcapture -%}
-{%- assign navYears = navYears | split: ";" -%}
-{%- endif -%}
-
-{%- comment -%}Build unique months and days from all dates{%- endcomment -%}
-{%- assign all_months = "" | split: "" -%}
-{%- assign all_days = "" | split: "" -%}
-{%- for item in items -%}
-  {%- assign date_value = item[field] | strip -%}
-  {%- if date_value contains "/" -%}
-    {%- assign date_parts = date_value | split: "/" -%}
-    {%- if date_parts.size == 3 -%}
-      {%- assign day = date_parts[0] -%}
-      {%- assign month = date_parts[1] -%}
-      {%- assign all_months = all_months | push: month -%}
-      {%- assign all_days = all_days | push: day -%}
-    {%- endif -%}
-  {%- elsif date_value contains "-" -%}
-    {%- assign date_parts = date_value | split: "-" -%}
-    {%- if date_parts.size == 3 -%}
-      {%- assign day = date_parts[0] -%}
-      {%- assign month = date_parts[1] -%}
-      {%- assign all_months = all_months | push: month -%}
-      {%- assign all_days = all_days | push: day -%}
-    {%- endif -%}
-  {%- endif -%}
-{%- endfor -%}
-{%- assign uniqueMonths = all_months | uniq | sort -%}
-{%- assign uniqueDays = all_days | uniq | sort_natural -%}
-
-{%- assign monthNames = "01:January,02:February,03:March,04:April,05:May,06:June,07:July,08:August,09:September,10:October,11:November,12:December" | split: "," -%}
 
 <div class="float-end" id="timeline-filters">
-    {%- if uniqueDays.size > 0 -%}
-    <div class="dropdown d-inline-block me-2" id="day-nav">
-        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dayButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span id="dayButtonText">Day</span>
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dayButton">
-            <a class="dropdown-item day-filter-option" href="#" data-day="">All Days</a>
-            <div class="dropdown-divider"></div>
-            {% for day in uniqueDays %}
-            <a class="dropdown-item day-filter-option" href="#" data-day="{{ day }}">{{ day }}</a>
-            {% endfor %}
-        </div>
-    </div>
-    {%- endif -%}
-    
-    {%- if uniqueMonths.size > 0 -%}
-    <div class="dropdown d-inline-block me-2" id="month-nav">
-        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="monthButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span id="monthButtonText">Month</span>
-        </button>
-        <div class="dropdown-menu" aria-labelledby="monthButton">
-            <a class="dropdown-item month-filter-option" href="#" data-month="">All Months</a>
-            <div class="dropdown-divider"></div>
-            {% for month in uniqueMonths %}
-            {%- assign monthNum = month -%}
-            {%- if month.size == 1 -%}{%- assign monthNum = "0" | append: month -%}{%- endif -%}
-            {%- for mn in monthNames -%}
-              {%- assign mnParts = mn | split: ":" -%}
-              {%- if mnParts[0] == monthNum -%}
-            <a class="dropdown-item month-filter-option" href="#" data-month="{{ month }}">{{ mnParts[1] }}</a>
-              {%- endif -%}
-            {%- endfor -%}
-            {% endfor %}
-        </div>
-    </div>
-    {%- endif -%}
-    
     <div class="dropdown d-inline-block" id="year-nav">
         <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="yearButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span id="yearButtonText">Year</span>
