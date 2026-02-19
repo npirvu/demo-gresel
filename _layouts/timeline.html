@@ -1,3 +1,6 @@
+
+Copy
+
 ---
 # "Timeline" page
 layout: page
@@ -93,8 +96,44 @@ custom-foot: js/timeline-js.html
 
 {%- assign monthNames = "01:January,02:February,03:March,04:April,05:May,06:June,07:July,08:August,09:September,10:October,11:November,12:December" | split: "," -%}
 
-<div class="float-end" id="timeline-filters"> 
-    {%- if navYears -%}
+<div class="float-end" id="timeline-filters">
+    {%- if uniqueDays.size > 0 -%}
+    <div class="dropdown d-inline-block me-2" id="day-nav">
+        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dayButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span id="dayButtonText">Day</span>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dayButton">
+            <a class="dropdown-item day-filter-option" href="#" data-day="">All Days</a>
+            <div class="dropdown-divider"></div>
+            {% for day in uniqueDays %}
+            <a class="dropdown-item day-filter-option" href="#" data-day="{{ day }}">{{ day }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    {%- endif -%}
+    
+    {%- if uniqueMonths.size > 0 -%}
+    <div class="dropdown d-inline-block me-2" id="month-nav">
+        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="monthButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span id="monthButtonText">Month</span>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="monthButton">
+            <a class="dropdown-item month-filter-option" href="#" data-month="">All Months</a>
+            <div class="dropdown-divider"></div>
+            {% for month in uniqueMonths %}
+            {%- assign monthNum = month -%}
+            {%- if month.size == 1 -%}{%- assign monthNum = "0" | append: month -%}{%- endif -%}
+            {%- for mn in monthNames -%}
+              {%- assign mnParts = mn | split: ":" -%}
+              {%- if mnParts[0] == monthNum -%}
+            <a class="dropdown-item month-filter-option" href="#" data-month="{{ month }}">{{ mnParts[1] }}</a>
+              {%- endif -%}
+            {%- endfor -%}
+            {% endfor %}
+        </div>
+    </div>
+    {%- endif -%}
+    
     <div class="dropdown d-inline-block" id="year-nav">
         <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="yearButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span id="yearButtonText">Year</span>
@@ -102,11 +141,10 @@ custom-foot: js/timeline-js.html
         <div class="dropdown-menu" aria-labelledby="yearButton">
             <a class="dropdown-item year-filter-option" href="#" data-year="">All Years</a>
             <div class="dropdown-divider"></div>
-            {% for y in navYears %}
+            {% for y in uniqueYears %}
             <a class="dropdown-item year-filter-option" href="#" data-year="{{ y }}">{{ y }}</a>{% endfor %}
         </div>
     </div>
-    {%- endif -%}
 </div>
 <div class="clearfix"></div>
 
